@@ -23,9 +23,11 @@ function getMailer()
 
     $mail->Port = 587;
 
+    $mail->CharSet = 'UTF-8';
+
     $mail->setFrom(
         'ssiteelections@gmail.com',
-        'SSITE Elections'
+        'SSITE Elections Portal'
     );
 
     return $mail;

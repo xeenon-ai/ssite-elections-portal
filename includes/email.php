@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../config/mail.php';
 
-function sendOTP($email, $fullname, $otp)
+function sendOTPEmail($email, $fullname, $otp)
 {
     try {
 
@@ -12,53 +12,96 @@ function sendOTP($email, $fullname, $otp)
 
         $mail->isHTML(true);
 
-        $mail->Subject = "SSITE Elections Verification Code";
+        $mail->Subject = "SSITE Elections Portal - Verification Code";
 
         $mail->Body = "
-        <div style='font-family:Arial;padding:30px'>
+        <!DOCTYPE html>
+        <html>
+        <body style='margin:0;padding:40px;background:#f5f7fa;font-family:Arial,sans-serif;'>
 
-            <h2 style='color:#0d3b66'>
-                SSITE Elections Portal
-            </h2>
+        <table width='100%' cellpadding='0' cellspacing='0'>
+            <tr>
+                <td align='center'>
 
-            <p>Hello <b>{$fullname}</b>,</p>
+                    <table width='600' style='background:#ffffff;border-radius:12px;padding:40px;'>
 
-            <p>Your verification code is:</p>
+                        <tr>
+                            <td align='center'>
 
-            <div style='
-                font-size:40px;
-                letter-spacing:10px;
-                font-weight:bold;
-                color:#0d6efd;
-                text-align:center;
-                margin:30px 0;
-            '>
+                                <h2 style='color:#001F54;margin-bottom:10px;'>
 
-                {$otp}
+                                    🗳 SSITE Elections Portal
 
-            </div>
+                                </h2>
 
-            <p>
-                This code will expire in
-                <b>5 minutes</b>.
-            </p>
+                                <p>
 
-            <hr>
+                                    Student Society of Information Technology Education
 
-            <small>
+                                </p>
 
-            Student Society of Information Technology Education
+                                <hr>
 
-            </small>
+                                <p>Hello <strong>{$fullname}</strong>,</p>
 
-        </div>
+                                <p>
+
+                                    Use the verification code below to continue.
+
+                                </p>
+
+                                <div style='
+                                    font-size:42px;
+                                    font-weight:bold;
+                                    letter-spacing:10px;
+                                    color:#001F54;
+                                    margin:30px 0;
+                                '>
+
+                                    {$otp}
+
+                                </div>
+
+                                <p>
+
+                                    This code expires in
+                                    <strong>5 minutes</strong>.
+
+                                </p>
+
+                                <hr>
+
+                                <small>
+
+                                    If you did not request this code,
+                                    you can safely ignore this email.
+
+                                </small>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        </body>
+        </html>
         ";
 
         return $mail->send();
 
-    } catch (Exception $e) {
+    }
 
-        return false;
+    catch(Exception $e){
+
+        return $e->getMessage();
 
     }
+
 }
