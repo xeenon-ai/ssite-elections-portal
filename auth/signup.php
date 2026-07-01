@@ -20,7 +20,7 @@ require_once "../includes/session.php";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
+
 
     $student_number = clean($_POST['student_number']);
     $fullname       = clean($_POST['fullname']);
@@ -137,16 +137,76 @@ if (empty($error)) {
         $year_level,
         $section
     ])) {
+// Get the new student's ID
+$studentId = $pdo->lastInsertId();
 
-        echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Student account created successfully.'
-            });
-        });
-        </script>";
+// Generate a 6-digit OTP
+$otp = generateOTP();
+
+// OTP expires in 5 minutes
+$expires = date(
+    "Y-m-d H:i:s",
+    time() + OTP_EXPIRY
+);
+// Save OTP to the database
+$stmt = $pdo->prepare("
+    INSERT INTO otp_codes
+    (
+        student_id,
+        otp_code,
+        expires_at,
+        purpose
+    )
+    VALUES
+    (
+        ?, ?, ?, 'signup'
+    )
+");
+
+$stmt->execute([
+    $studentId,
+    $otp,
+    $expires
+]);
+
+try {
+
+    $mail = getMailer();
+
+    $mail->addAddress($email, $fullname);
+
+    $mail->isHTML(true);
+
+    $mail->Subject = "SSITE Elections Portal - Account Verification";
+
+    $mail->Body = "
+        <h2>Welcome to SSITE Elections Portal</h2>
+
+        <p>Hello <strong>{$fullname}</strong>,</p>
+
+        <p>Your verification code is:</p>
+
+        <h1 style='letter-spacing:6px;color:#001F54;'>{$otp}</h1>
+
+        <p>This code will expire in <strong>5 minutes</strong>.</p>
+
+        <p>If you did not request this account, simply ignore this email.</p>
+    ";
+
+    $mail->send();
+
+    $_SESSION['signup_student'] = $studentId;
+
+$_SESSION['success'] = "Registration successful! We've sent a verification code to your email.";
+    
+header("Location: " . BASE_URL . "auth/verify-signup.php");
+exit();
+
+} catch (Exception $e) {
+
+    $error = "Unable to send verification email.";
+
+}
 
     } else {
 

@@ -1,7 +1,37 @@
 <?php
+
 $pageTitle = "Student Login";
-include '../includes/header.php';
+
+require_once "../config/config.php";
+require_once "../includes/session.php";
+
+include "../includes/header.php";
+
 ?>
+
+<?php if (isset($_SESSION['success'])): ?>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    Swal.fire({
+
+        icon: "success",
+
+        title: "Account Verified!",
+
+        text: "<?= $_SESSION['success']; ?>",
+
+        confirmButtonColor: "#001F54"
+
+    });
+
+});
+
+</script>
+
+<?php unset($_SESSION['success']); endif; ?>
 
 <section class="d-flex align-items-center" style="min-height:90vh; background:#f5f7fa;">
 
@@ -60,7 +90,7 @@ include '../includes/header.php';
 
                         <div class="text-center mt-4">
 
-                            <a href="index.php" class="text-decoration-none">
+<a href="<?= BASE_URL ?>index.php"class="text-decoration-none">
 
                                 ← Back to Home
 

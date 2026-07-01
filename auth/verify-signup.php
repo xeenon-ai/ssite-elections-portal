@@ -1,7 +1,11 @@
 <?php
 
-require_once 'config/database.php';
-require_once 'includes/session.php';
+$pageTitle = "Verify Account";
+
+require_once "../config/config.php";
+require_once "../config/database.php";
+require_once "../includes/functions.php";
+require_once "../includes/session.php";
 
 if (!isset($_SESSION['signup_student'])) {
     header("Location: signup.php");
@@ -10,120 +14,177 @@ if (!isset($_SESSION['signup_student'])) {
 
 $error = "";
 
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
+$studentId = $_SESSION['signup_student'];
 
-    $otp = trim($_POST['otp']);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $stmt = $pdo->prepare("
-        SELECT *
-        FROM otp_codes
-        WHERE student_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-    ");
+    $otp = clean($_POST['otp']);
 
-    $stmt->execute([
-        $_SESSION['signup_student']
-    ]);
+    if (empty($otp)) {
 
-    $record = $stmt->fetch();
+        $error = "Please enter your verification code.";
 
-    if (!$record) {
+    } else {
 
-        $error = "OTP not found.";
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM otp_codes
+            WHERE student_id = ?
+              AND otp_code = ?
+              AND purpose = 'signup'
+              AND verified = 0
+            ORDER BY id DESC
+            LIMIT 1
+        ");
 
-    }
+        $stmt->execute([$studentId, $otp]);
 
-    elseif ($record['verified']) {
+        $record = $stmt->fetch();
 
-        $error = "OTP already used.";
+        if (!$record) {
 
-    }
+            $error = "Invalid verification code.";
 
-    elseif (strtotime($record['expires_at']) < time()) {
+        } elseif (strtotime($record['expires_at']) < time()) {
 
-        $error = "OTP expired.";
+            $error = "Verification code has expired.";
 
-    }
+        } else {
 
-    elseif ($record['otp_code'] != $otp) {
+            // Verify OTP
+            $stmt = $pdo->prepare("
+                UPDATE otp_codes
+                SET verified = 1,
+                    used_at = NOW()
+                WHERE id = ?
+            ");
 
-        $error = "Invalid OTP.";
+            $stmt->execute([$record['id']]);
 
-    }
+            // Verify student
+            $stmt = $pdo->prepare("
+                UPDATE students
+                SET is_verified = 1
+                WHERE id = ?
+            ");
 
-    else {
+            $stmt->execute([$studentId]);
 
-        $pdo->prepare("
-            UPDATE otp_codes
-            SET verified = 1
-            WHERE id = ?
-        ")->execute([$record['id']]);
+            unset($_SESSION['signup_student']);
 
-        $pdo->prepare("
-            UPDATE students
-            SET is_verified = 1
-            WHERE id = ?
-        ")->execute([
-            $_SESSION['signup_student']
-        ]);
+            $_SESSION['success'] = "Your account has been verified.";
 
-        unset($_SESSION['signup_student']);
-        unset($_SESSION['demo_signup_otp']);
+            header("Location: login.php");
+            exit();
 
-        header("Location: login.php?registered=1");
-        exit();
+        }
 
     }
 
 }
 
-$pageTitle = "Verify Registration";
-include 'includes/header.php';
+include "../includes/header.php";
 ?>
 
-<div class="container py-5">
+<?php if (isset($_SESSION['success'])): ?>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    Swal.fire({
+
+        icon: "success",
+
+        title: "Registration Successful!",
+
+        text: "<?= $_SESSION['success']; ?>",
+
+        confirmButtonColor: "#001F54"
+
+    });
+
+});
+
+</script>
+
+<?php unset($_SESSION['success']); endif; ?>
+
+<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
+
+<div class="container">
 
 <div class="row justify-content-center">
 
-<div class="col-md-5">
+<div class="col-lg-5">
 
-<div class="card shadow">
+<div class="card border-0 shadow-lg rounded-4">
 
-<div class="card-body p-4">
+<div class="card-body p-5">
 
-<h3>Verify Your Account</h3>
+<div class="text-center mb-4">
 
-<p>Enter the OTP sent to your email.</p>
+<img
+src="<?= BASE_URL ?>assets/images/ssite-logo.png"
+width="90"
+class="mb-3"
+alt="SSITE Logo">
 
-<div class="alert alert-info">
+<h2 class="fw-bold text-primary">
 
-<strong>Demo OTP:</strong>
+Verify Your Account
 
-<?= $_SESSION['demo_signup_otp']; ?>
+</h2>
+
+<p class="text-muted">
+
+Enter the 6-digit verification code sent to your email.
+
+</p>
 
 </div>
 
-<?php if($error): ?>
+<?php if (!empty($error)): ?>
 
-<div class="alert alert-danger">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-<?= htmlspecialchars($error); ?>
+    Swal.fire({
+        icon: "error",
+        title: "Verification Failed",
+        text: "<?= htmlspecialchars($error, ENT_QUOTES) ?>"
+    });
 
-</div>
+});
+</script>
 
 <?php endif; ?>
 
 <form method="POST">
 
+<div class="mb-4">
+
+<label class="form-label">
+
+Verification Code
+
+</label>
+
 <input
 type="text"
 name="otp"
-class="form-control mb-3"
 maxlength="6"
+class="form-control form-control-lg text-center"
+placeholder="123456"
 required>
 
-<button class="btn btn-primary w-100">
+</div>
+
+<button
+type="submit"
+class="btn btn-primary btn-lg w-100">
+
+<i class="bi bi-shield-check me-2"></i>
 
 Verify Account
 
@@ -131,7 +192,13 @@ Verify Account
 
 </form>
 
-</div>
+<div class="text-center mt-4">
+
+<a href="resend-otp.php">
+
+Didn't receive the code? Resend OTP
+
+</a>
 
 </div>
 
@@ -141,4 +208,10 @@ Verify Account
 
 </div>
 
-<?php include 'includes/footer.php'; ?>
+</div>
+
+</div>
+
+</section>
+
+<?php include "../includes/footer.php"; ?>
