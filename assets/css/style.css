@@ -1,0 +1,85 @@
+body{
+
+    font-family:Segoe UI,sans-serif;
+
+}
+
+.hero{
+
+    background:linear-gradient(135deg,#001F54,#003566);
+
+    color:white;
+
+    min-height:90vh;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.card{
+
+    border:none;
+
+    border-radius:15px;
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.btn-warning{
+
+    border-radius:30px;
+
+    padding:12px 30px;
+
+}
+
+.navbar{
+    background:#001F54;
+}
+
+footer{
+
+    background:#001F54 !important;
+
+}
+
+/* LOGIN */
+
+body{
+    background:#f5f7fa;
+}
+
+.card{
+    border-radius:20px;
+}
+
+.form-control{
+    border-radius:12px;
+    padding:12px;
+}
+
+.btn{
+    border-radius:12px;
+}
+
+.btn-primary{
+    background:#001F54;
+    border:none;
+}
+
+.btn-primary:hover{
+    background:#003566;
+}
+
+.navbar{
+    background:#001F54;
+}

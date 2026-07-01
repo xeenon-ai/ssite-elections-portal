@@ -1,0 +1,1 @@
+vote.php
