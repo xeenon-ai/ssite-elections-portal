@@ -90,11 +90,6 @@ require_once __DIR__ . '/../config/config.php';
 </a>
 
 </li>
-
-                    </a>
-
-                </li>
-
             </ul>
 
         </div>

@@ -1,324 +1,566 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| SSITE Elections Portal
+|--------------------------------------------------------------------------
+| File: auth/signup.php
+| Purpose: Student Registration
+|--------------------------------------------------------------------------
+*/
 
-require_once 'config/database.php';
-require_once 'includes/functions.php';
-require_once 'includes/session.php';
+$pageTitle = "Student Registration";
+
+require_once "../config/config.php";
+require_once "../config/database.php";
+require_once "../config/mail.php";
+
+require_once "../includes/functions.php";
+require_once "../includes/session.php";
 
 $error = "";
-$success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
 
-    $student_number = trim($_POST['student_number']);
-    $fullname = trim($_POST['fullname']);
-    $email = trim($_POST['email']);
-    $course = trim($_POST['course']);
-    $year_level = trim($_POST['year_level']);
-    $section = trim($_POST['section']);
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    $student_number = clean($_POST['student_number']);
+    $fullname       = clean($_POST['fullname']);
+    $email          = clean($_POST['email']);
+    $course         = clean($_POST['course']);
+    $year_level     = clean($_POST['year_level']);
+    $section        = clean($_POST['section']);
+    $password       = $_POST['password'];
+    $confirm        = $_POST['confirm_password'];
 
-    // Email validation
-    if (!preg_match('/@phinmaed\.com$/', $email)) {
-        $error = "Only @phinmaed.com email addresses are allowed.";
-    }
+// Empty fields
+if (
+    empty($student_number) ||
+    empty($fullname) ||
+    empty($email) ||
+    empty($course) ||
+    empty($year_level) ||
+    empty($section) ||
+    empty($password) ||
+    empty($confirm)
+) {
 
-    // Password validation
-    elseif ($password !== $confirm_password) {
-        $error = "Passwords do not match.";
-    }
+    $error = "Please complete all fields.";
 
-    elseif (strlen($password) < 8) {
-        $error = "Password must be at least 8 characters.";
-    }
+}
 
-    else {
+// PHINMA Email
+elseif (!isValidPhinmaEmail($email)) {
 
-        // Check Student Number
-        $stmt = $pdo->prepare("SELECT id FROM students WHERE student_number = ?");
-        $stmt->execute([$student_number]);
+    $error = "Only @phinmaed.com email addresses are allowed.";
 
-        if ($stmt->fetch()) {
+}
 
-            $error = "Student Number already exists.";
+// Passwords
+elseif ($password != $confirm) {
 
-        } else {
+    $error = "Passwords do not match.";
 
-            // Check Email
-            $stmt = $pdo->prepare("SELECT id FROM students WHERE email = ?");
-            $stmt->execute([$email]);
+}
 
-            if ($stmt->fetch()) {
+// Password Length
+elseif (strlen($password) < 8) {
 
-                $error = "Email already registered.";
+    $error = "Password must be at least 8 characters.";
 
-            } else {
+}
 
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+if (empty($error)) {
 
-                $stmt = $pdo->prepare("
-                    INSERT INTO students
-                    (student_number, fullname, email, password, course, year_level, section)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ");
+    // Student Number
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM students
+        WHERE student_number = ?
+    ");
 
-                $stmt->execute([
-                    $student_number,
-                    $fullname,
-                    $email,
-                    $hashedPassword,
-                    $course,
-                    $year_level,
-                    $section
-                ]);
+    $stmt->execute([$student_number]);
 
-                $studentId = $pdo->lastInsertId();
+    if ($stmt->fetch()) {
 
-                $otp = generateOTP();
-
-                $expires = date("Y-m-d H:i:s", time() + OTP_EXPIRATION);
-
-                $stmt = $pdo->prepare("
-                    INSERT INTO otp_codes
-                    (student_id, otp_code, expires_at)
-                    VALUES (?, ?, ?)
-                ");
-
-                $stmt->execute([
-                    $studentId,
-                    $otp,
-                    $expires
-                ]);
-
-                $_SESSION['signup_student'] = $studentId;
-                $_SESSION['demo_signup_otp'] = $otp;
-
-                header("Location: verify-signup.php");
-                exit();
-
-            }
-
-        }
+        $error = "Student Number already exists.";
 
     }
 
 }
 
-$pageTitle = "Student Registration";
-include 'includes/header.php';
+if (empty($error)) {
+
+    // Email
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM students
+        WHERE email = ?
+    ");
+
+    $stmt->execute([$email]);
+
+    if ($stmt->fetch()) {
+
+        $error = "Email already exists.";
+
+    }
+
+}
+if (empty($error)) {
+
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    $stmt = $pdo->prepare("
+        INSERT INTO students
+        (
+            student_number,
+            fullname,
+            email,
+            password,
+            course,
+            year_level,
+            section,
+            is_verified,
+            has_voted
+        )
+        VALUES
+        (
+            ?, ?, ?, ?, ?, ?, ?, 0, 0
+        )
+    ");
+
+    if ($stmt->execute([
+        $student_number,
+        $fullname,
+        $email,
+        $hashedPassword,
+        $course,
+        $year_level,
+        $section
+    ])) {
+
+        echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Student account created successfully.'
+            });
+        });
+        </script>";
+
+    } else {
+
+        $error = "Unable to create account.";
+
+    }
+
+}
+}
+
+include "../includes/header.php";
 ?>
 
-<section class="py-5" style="background:#f5f7fa; min-height:90vh;">
+<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
 
-    <div class="container">
+<div class="container">
 
-        <div class="row justify-content-center">
+<div class="row justify-content-center">
 
-            <div class="col-lg-7">
+<div class="col-lg-8">
 
-                <div class="card shadow-lg border-0 rounded-4">
+<div class="card border-0 shadow-lg rounded-4">
 
-                    <div class="card-body p-5">
+<div class="card-body p-5">
 
-                        <div class="text-center mb-4">
+<div class="text-center mb-4">
 
-                            <img src="assets/images/ssite-logo.png"
-                                 width="80"
-                                 class="mb-3"
-                                 alt="SSITE Logo">
+<img
+src="<?= BASE_URL ?>assets/images/ssite-logo.png"
+width="90"
+alt="SSITE Logo"
+class="mb-3">
 
-                            <h2 class="fw-bold text-primary">
-                                Student Registration
-                            </h2>
+<h2 class="fw-bold text-primary">
 
-                            <p class="text-muted">
-                                Create your SSITE Elections account.
-                                Only <strong>@phinmaed.com</strong> email addresses are allowed.
-                            </p>
+Student Registration
 
-                        </div>
+</h2>
 
-                        </div>
+<p class="text-muted">
 
-<form action="" method="POST">
+Create your SSITE Elections Portal account.
 
-                        <form action="" method="POST">
+<br>
 
-                            <div class="row">
+Only
+<strong>@phinmaed.com</strong>
+email addresses are allowed.
 
-                                <div class="col-md-6 mb-3">
+</p>
 
-                                    <label class="form-label">Student Number</label>
+</div>
 
-                                    <input
-                                        type="text"
-                                        name="student_number"
-                                        class="form-control"
-                                        placeholder="2024-00001"
-                                        required>
+<?php if(!empty($error)): ?>
 
-                                </div>
+<script>
 
-                                <div class="col-md-6 mb-3">
+document.addEventListener("DOMContentLoaded",function(){
 
-                                    <label class="form-label">Full Name</label>
+Swal.fire({
 
-                                    <input
-                                        type="text"
-                                        name="fullname"
-                                        class="form-control"
-                                        placeholder="Juan Dela Cruz"
-                                        required>
+icon:"error",
 
-                                </div>
+title:"Registration Failed",
 
-                            </div>
+text:"<?= htmlspecialchars($error,ENT_QUOTES) ?>",
 
-                            <div class="mb-3">
+confirmButtonColor:"#001F54"
 
-                                <label class="form-label">PHINMA Email</label>
+});
 
-                                <input
-                                    type="email"
-                                    name="email"
-                                    class="form-control"
-                                    placeholder="example@phinmaed.com"
-                                    required>
+});
 
-                            </div>
+</script>
 
-                            <div class="row">
+<?php endif; ?>
 
-                                <div class="col-md-4 mb-3">
+<form method="POST">
 
-                                    <label class="form-label">Course</label>
+<div class="row">
 
-                                    <select
-                                        name="course"
-                                        class="form-select"
-                                        required>
+<div class="col-md-6 mb-3">
 
-                                        <option value="">Select</option>
-                                        <option>BSIT</option>
-                                        <option>BSCS</option>
-                                        <option>BSIS</option>
+<label class="form-label">
 
-                                    </select>
+Student Number
 
-                                </div>
+</label>
 
-                                <div class="col-md-4 mb-3">
+<input
+type="text"
+name="student_number"
+class="form-control"
+placeholder="2024-00001"
+required>
 
-                                    <label class="form-label">Year Level</label>
+</div>
 
-                                    <select
-                                        name="year_level"
-                                        class="form-select"
-                                        required>
+<div class="col-md-6 mb-3">
 
-                                        <option value="">Select</option>
-                                        <option>1st Year</option>
-                                        <option>2nd Year</option>
-                                        <option>3rd Year</option>
-                                        <option>4th Year</option>
+<label class="form-label">
 
-                                    </select>
+Full Name
 
-                                </div>
+</label>
 
-                                <div class="col-md-4 mb-3">
+<input
+type="text"
+name="fullname"
+class="form-control"
+placeholder="Juan Dela Cruz"
+required>
 
-                                    <label class="form-label">Section</label>
+</div>
 
-                                    <input
-                                        type="text"
-                                        name="section"
-                                        class="form-control"
-                                        placeholder="A"
-                                        required>
+</div>
+<div class="mb-3">
 
-                                </div>
+<label class="form-label">
 
-                            </div>
+PHINMA Email
 
-                            <div class="row">
+</label>
 
-                                <div class="col-md-6 mb-3">
+<input
+type="email"
+name="email"
+id="email"
+class="form-control"
+placeholder="example@phinmaed.com"
+required>
 
-                                    <label class="form-label">Password</label>
+<div class="form-text">
 
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        class="form-control"
-                                        required>
+Only PHINMA Education email addresses are accepted.
 
-                                </div>
+</div>
 
-                                <div class="col-md-6 mb-3">
+</div>
 
-                                    <label class="form-label">Confirm Password</label>
+<div class="row">
 
-                                    <input
-                                        type="password"
-                                        name="confirm_password"
-                                        class="form-control"
-                                        required>
+<div class="col-md-4 mb-3">
 
-                                </div>
+<label class="form-label">
 
-                            </div>
+Course
 
-                            <div class="form-check mb-4">
+</label>
 
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="terms"
-                                    required>
+<select
+name="course"
+class="form-select"
+required>
 
-                                <label
-                                    class="form-check-label"
-                                    for="terms">
+<option value="">Select Course</option>
 
-                                    I agree to the Terms and Conditions.
+<option value="BSIT">BSIT</option>
 
-                                </label>
+<option value="BSCS">BSCS</option>
 
-                            </div>
+<option value="BSIS">BSIS</option>
 
-                            <button
-                                type="submit"
-                                class="btn btn-primary btn-lg w-100">
+</select>
 
-                                <i class="bi bi-person-plus-fill me-2"></i>
+</div>
 
-                                Create Account
+<div class="col-md-4 mb-3">
 
-                            </button>
+<label class="form-label">
 
-                        </form>
+Year Level
 
-                        <div class="text-center mt-4">
+</label>
 
-                            Already have an account?
+<select
+name="year_level"
+class="form-select"
+required>
 
-                            <a href="login.php">
-                                Login here
-                            </a>
+<option value="">Select Year</option>
 
-                        </div>
+<option value="1st Year">1st Year</option>
 
-                    </div>
+<option value="2nd Year">2nd Year</option>
 
-                </div>
+<option value="3rd Year">3rd Year</option>
 
-            </div>
+<option value="4th Year">4th Year</option>
 
-        </div>
+</select>
 
-    </div>
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label class="form-label">
+
+Section
+
+</label>
+
+<input
+type="text"
+name="section"
+class="form-control"
+placeholder="A"
+required>
+
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Password
+
+</label>
+
+<div class="input-group">
+
+<input
+type="password"
+name="password"
+id="password"
+class="form-control"
+required>
+
+<button
+class="btn btn-outline-secondary"
+type="button"
+onclick="togglePassword('password',this)">
+
+<i class="bi bi-eye"></i>
+
+</button>
+
+</div>
+
+<div id="strengthText"
+class="form-text text-muted">
+
+Minimum of 8 characters.
+
+</div>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Confirm Password
+
+</label>
+
+<div class="input-group">
+
+<input
+type="password"
+name="confirm_password"
+id="confirm_password"
+class="form-control"
+required>
+
+<button
+class="btn btn-outline-secondary"
+type="button"
+onclick="togglePassword('confirm_password',this)">
+
+<i class="bi bi-eye"></i>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<div class="form-check mb-4">
+
+    <input
+        class="form-check-input"
+        type="checkbox"
+        id="terms"
+        required>
+
+    <label
+        class="form-check-label"
+        for="terms">
+
+        I agree to the
+        <a href="#" class="text-decoration-none">
+            Terms and Conditions
+        </a>
+
+    </label>
+
+</div>
+
+<button
+    type="submit"
+    class="btn btn-primary btn-lg w-100">
+
+    <i class="bi bi-person-plus-fill me-2"></i>
+
+    Create Account
+
+</button>
+
+</form>
+
+<div class="text-center mt-4">
+
+    Already have an account?
+
+    <a href="<?= BASE_URL ?>auth/login.php">
+
+        Login here
+
+    </a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<script>
+
+function togglePassword(id, button)
+{
+    const input = document.getElementById(id);
+    const icon = button.querySelector("i");
+
+    if(input.type === "password")
+    {
+        input.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    }
+    else
+    {
+        input.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    }
+}
+
+const password = document.getElementById("password");
+const strength = document.getElementById("strengthText");
+
+password.addEventListener("keyup", function(){
+
+    let value = password.value;
+
+    if(value.length < 8)
+    {
+        strength.innerHTML =
+            "<span class='text-danger'>Weak Password</span>";
+    }
+    else if(value.length < 12)
+    {
+        strength.innerHTML =
+            "<span class='text-warning'>Medium Password</span>";
+    }
+    else
+    {
+        strength.innerHTML =
+            "<span class='text-success'>Strong Password</span>";
+    }
+
+});
+
+</script>
+<script>
+
+document.querySelector("form").addEventListener("submit", function(e){
+
+    const email = document
+        .getElementById("email")
+        .value
+        .trim()
+        .toLowerCase();
+
+    if(!email.endsWith("@phinmaed.com"))
+    {
+        e.preventDefault();
+
+        Swal.fire({
+            icon:"error",
+            title:"Invalid Email",
+            text:"Only @phinmaed.com email addresses are allowed.",
+            confirmButtonColor:"#001F54"
+        });
+
+        return;
+    }
+
+});
+
+</script>
+
+<?php include '../includes/footer.php'; ?>
+<?php exit; ?>
