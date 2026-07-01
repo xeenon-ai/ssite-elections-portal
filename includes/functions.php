@@ -24,4 +24,4 @@ header("Location: ".$url);
 
 exit();
 
-}
+}   

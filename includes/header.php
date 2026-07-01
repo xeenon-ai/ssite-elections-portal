@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../config/config.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +26,7 @@
 
     <!-- CSS -->
 
-<link rel="stylesheet" href="/ssite-elections/assets/css/style.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 
 </head>
 
@@ -36,10 +40,7 @@
         <a class="navbar-brand fw-bold"
            href="#">
 
-<img src="/ssite-elections/assets/images/ssite-logo.png"
-     alt="SSITE Logo"
-     width="40"
-     class="me-2">
+<img src="<?= BASE_URL ?>assets/images/ssite-logo.png">
 
 <span class="fw-bold">
     SSITE Elections Portal
@@ -76,22 +77,16 @@
 
 <li class="nav-item me-2">
 
-<a class="btn btn-outline-light"
-href="login.php">
-
-Login
-
+<a class="btn btn-outline-light" href="<?= BASE_URL ?>auth/login.php">
+    Login
 </a>
 
 </li>
 
 <li class="nav-item">
 
-<a class="btn btn-warning"
-href="signup.php">
-
-Sign Up
-
+<a class="btn btn-warning ms-2" href="<?= BASE_URL ?>auth/signup.php">
+    Sign Up
 </a>
 
 </li>
