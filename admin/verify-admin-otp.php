@@ -69,6 +69,19 @@ $stmt->execute([
             WHERE id = ?
         ");
 
+        // Get student information before deleting
+$stmt = $pdo->prepare("
+    SELECT fullname
+    FROM students
+    WHERE id = ?
+");
+
+$stmt->execute([
+    $_SESSION['delete_student_id']
+]);
+
+$student = $stmt->fetch();
+
         $stmt->execute([
             $_SESSION['delete_student_id']
         ]);
@@ -80,6 +93,14 @@ $stmt->execute([
             "text" => "The student account has been permanently deleted.",
             "icon" => "success"
         ];
+
+        logActivity(
+    $pdo,
+    "admin",
+    $_SESSION['admin_id'],
+    "Deleted student: " . $student['fullname']
+);
+
 
         header("Location: students.php");
         exit();

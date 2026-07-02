@@ -140,6 +140,33 @@ Election Results
 
 </div>
 
+
+<div class="col-md-6">
+
+<a href="settings.php" class="btn btn-dark w-100 btn-lg">
+
+<i class="bi bi-gear-fill me-2"></i>
+
+Election Settings
+
+</a>
+
+</div>
+
+
+<div class="col-md-6">
+
+<a href="activity-log.php" class="btn btn-dark w-100 btn-lg">
+
+<i class="bi bi-clock-history me-2"></i>
+
+Activity Log
+
+</a>
+
+</div>
+
+
 <div class="col-md-6">
 
 <a href="logout.php" class="btn btn-danger w-100 btn-lg">

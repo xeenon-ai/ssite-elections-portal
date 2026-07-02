@@ -3,6 +3,7 @@
 require_once "../config/config.php";
 require_once "../config/database.php";
 require_once "../includes/session.php";
+require_once "../includes/functions.php";
 
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
@@ -27,6 +28,8 @@ $stmt->execute([$id]);
 
 $candidate = $stmt->fetch();
 
+
+
 if ($candidate) {
 
     if (!empty($candidate['photo']) && file_exists("../uploads/" . $candidate['photo'])) {
@@ -41,6 +44,13 @@ if ($candidate) {
     ");
 
     $stmt->execute([$id]);
+
+    logActivity(
+    $pdo,
+    "admin",
+    $_SESSION['admin_id'],
+    "Deleted candidate: " . $candidate['fullname']
+);
 
 }
 

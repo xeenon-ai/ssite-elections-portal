@@ -5,6 +5,7 @@ $pageTitle = "Add Candidate";
 require_once "../config/config.php";
 require_once "../config/database.php";
 require_once "../includes/session.php";
+require_once "../includes/functions.php";
 
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
@@ -74,6 +75,13 @@ if (!move_uploaded_file(
             $bio,
             $is_active
         ]);
+
+        logActivity(
+    $pdo,
+    "admin",
+    $_SESSION['admin_id'],
+    "Added candidate: ".$fullname
+);
 
         $_SESSION['candidate_success'] = [
     "title" => "Candidate Added!",

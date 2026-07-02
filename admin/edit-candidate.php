@@ -5,6 +5,7 @@ $pageTitle = "Edit Candidate";
 require_once "../config/config.php";
 require_once "../config/database.php";
 require_once "../includes/session.php";
+require_once "../includes/functions.php";
 
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
@@ -95,6 +96,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $is_active,
             $id
         ]);
+
+        logActivity(
+    $pdo,
+    "admin",
+    $_SESSION['admin_id'],
+    "Edited candidate: " . $fullname
+);
 
         $_SESSION['candidate_success'] = [
     "title" => "Candidate Updated!",

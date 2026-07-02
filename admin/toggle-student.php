@@ -3,6 +3,7 @@
 require_once "../config/config.php";
 require_once "../config/database.php";
 require_once "../includes/session.php";
+require_once "../includes/functions.php";
 
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
@@ -18,7 +19,7 @@ $id = (int)$_GET['id'];
 
 // Get current status
 $stmt = $pdo->prepare("
-    SELECT is_active
+    SELECT fullname, is_active
     FROM students
     WHERE id = ?
 ");
@@ -42,6 +43,26 @@ $stmt = $pdo->prepare("
 ");
 
 $stmt->execute([$newStatus, $id]);
+
+if($newStatus == 1){
+
+    logActivity(
+        $pdo,
+        "admin",
+        $_SESSION['admin_id'],
+        "Activated student: " . $student['fullname']
+    );
+
+}else{
+
+    logActivity(
+        $pdo,
+        "admin",
+        $_SESSION['admin_id'],
+        "Deactivated student: " . $student['fullname']
+    );
+
+}
 
 if ($newStatus) {
 

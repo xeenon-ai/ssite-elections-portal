@@ -25,3 +25,34 @@ header("Location: ".$url);
 exit();
 
 }   
+
+function logActivity($pdo, $userType, $userId, $activity)
+{
+
+    $stmt = $pdo->prepare("
+        INSERT INTO activity_logs
+        (
+            user_type,
+            user_id,
+            activity,
+            ip_address
+        )
+        VALUES
+        (
+            ?, ?, ?, ?
+        )
+    ");
+
+    $stmt->execute([
+
+        $userType,
+
+        $userId,
+
+        $activity,
+
+        $_SERVER['REMOTE_ADDR']
+
+    ]);
+
+}
