@@ -5,6 +5,8 @@ date_default_timezone_set('Asia/Manila');
 define('APP_NAME', 'SSITE Elections Portal');
 
 define('BASE_URL', '/ssite-elections/');
+define('ADMIN_EMAIL', 'ssiteelections@gmail.com');
+define('ADMIN_NAME', 'Administrator');
 
 define('OTP_EXPIRY', 300);
 

@@ -40,8 +40,12 @@ require_once __DIR__ . '/../config/config.php';
         <a class="navbar-brand fw-bold"
            href="#">
 
-<img src="<?= BASE_URL ?>assets/images/ssite-logo.png">
-
+<img
+    src="<?= BASE_URL ?>assets/images/ssite-logo.png"
+    alt="SSITE Logo"
+    class="img-fluid"
+    style="max-width:90px;">
+    
 <span class="fw-bold">
     SSITE Elections Portal
 </span>

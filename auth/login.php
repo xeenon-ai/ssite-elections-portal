@@ -3,23 +3,172 @@
 $pageTitle = "Student Login";
 
 require_once "../config/config.php";
+require_once "../config/database.php";
+require_once "../config/mail.php";
+
+require_once "../includes/functions.php";
 require_once "../includes/session.php";
 
-include "../includes/header.php";
+$error = "";
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $student_number = clean($_POST['student_number']);
+    $password = $_POST['password'];
+
+    if (empty($student_number)) {
+
+        $error = "Please enter your Student Number.";
+
+    }
+
+    if (empty($error)) {
+
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM students
+            WHERE student_number = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$student_number]);
+
+        $student = $stmt->fetch();
+
+        if (!$student['is_active']) {
+
+    $error = "Your account has been deactivated. Please contact the administrator.";
+
+}
+
+if (!$student) {
+
+    $error = "Student number not found.";
+
+} elseif (!$student['is_verified']) {
+
+    $error = "Your account is not yet verified.";
+
+} elseif (!$student['is_active']) {
+
+    $error = "Your account has been deactivated. Please contact the administrator.";
+
+} else {
+
+    // Password verification
+    // Generate OTP
+    // Redirect to verify-login.php
+
+}
+
+if (!$student) {
+
+    $error = "Student account not found.";
+
+}
+
+elseif (!password_verify($password, $student['password'])) {
+
+    $error = "Incorrect password.";
+
+}
+
+elseif (!$student['is_verified']) {
+
+    $error = "Please verify your account before logging in.";
+
+}
+        if (empty($error)) {
+
+    // Generate OTP
+    $otp = generateOTP();
+
+    $expires = date(
+        "Y-m-d H:i:s",
+        time() + OTP_EXPIRY
+    );
+
+    // Save Login OTP
+    $stmt = $pdo->prepare("
+        INSERT INTO otp_codes
+        (
+            student_id,
+            otp_code,
+            expires_at,
+            purpose
+        )
+        VALUES
+        (
+            ?, ?, ?, 'login'
+        )
+    ");
+
+    $stmt->execute([
+        $student['id'],
+        $otp,
+        $expires
+    ]);
+
+    try {
+
+        $mail = getMailer();
+
+        $mail->addAddress(
+            $student['email'],
+            $student['fullname']
+        );
+
+        $mail->isHTML(true);
+
+        $mail->Subject = "SSITE Elections Portal - Login OTP";
+
+        $mail->Body = "
+            <h2>Login Verification</h2>
+
+            <p>Hello <strong>{$student['fullname']}</strong>,</p>
+
+            <p>Your login verification code is:</p>
+
+            <h1 style='letter-spacing:6px;color:#001F54;'>{$otp}</h1>
+
+            <p>This OTP expires in <strong>5 minutes</strong>.</p>
+        ";
+
+        $mail->send();
+
+        $_SESSION['login_student'] = $student['id'];
+
+        $_SESSION['success'] = "A login verification code has been sent to your email.";
+
+        header("Location: verify-login.php");
+        exit();
+
+    } catch (Exception $e) {
+
+        $error = "Unable to send the login verification email.";
+
+    }
+
+}
+
+    }
+
+}
+
+include "../includes/header.php";
 ?>
 
 <?php if (isset($_SESSION['success'])): ?>
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function(){
 
     Swal.fire({
 
         icon: "success",
 
-        title: "Account Verified!",
+        title: "Login OTP",
 
         text: "<?= $_SESSION['success']; ?>",
 
@@ -33,81 +182,165 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <?php unset($_SESSION['success']); endif; ?>
 
-<section class="d-flex align-items-center" style="min-height:90vh; background:#f5f7fa;">
+<?php if (!empty($error)): ?>
 
-    <div class="container">
+<script>
 
-        <div class="row justify-content-center">
+document.addEventListener("DOMContentLoaded", function(){
 
-            <div class="col-lg-5">
+    Swal.fire({
 
-                <div class="card shadow-lg border-0 rounded-4">
+        icon: "error",
 
-                    <div class="card-body p-5">
+        title: "Login Failed",
 
-                        <div class="text-center mb-4">
+        text: "<?= htmlspecialchars($error, ENT_QUOTES); ?>",
 
-<img src="../assets/images/ssite-logo.png">
+        confirmButtonColor: "#001F54"
 
-                            <h2 class="fw-bold text-primary">
-                                Student Login
-                            </h2>
+    });
 
-                            <p class="text-muted">
-                                Enter your Student Number to receive a One-Time Password (OTP).
-                            </p>
+});
 
-                        </div>
+</script>
 
-                        <form method="POST" action="">
+<?php endif; ?>
 
-                            <div class="mb-4">
+<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
 
-                                <label class="form-label fw-semibold">
-                                    Student Number
-                                </label>
+<div class="container">
 
-                                <input
-                                    type="text"
-                                    name="student_number"
-                                    class="form-control form-control-lg"
-                                    placeholder="Ex. 2024-00001"
-                                    required>
+<div class="row justify-content-center">
 
-                            </div>
+<div class="col-lg-5">
 
-                            <button
-                                type="submit"
-                                class="btn btn-primary btn-lg w-100">
+<div class="card border-0 shadow-lg rounded-4">
 
-                                <i class="bi bi-envelope-paper me-2"></i>
+<div class="card-body p-5">
 
-                                Send OTP
+<div class="text-center mb-4">
 
-                            </button>
+<img src="<?= BASE_URL ?>assets/images/ssite-logo.png"
+width="90"
+class="mb-3">
 
-                        </form>
+<h2 class="fw-bold text-primary">
 
-                        <div class="text-center mt-4">
+Student Login
 
-<a href="<?= BASE_URL ?>index.php"class="text-decoration-none">
+</h2>
 
-                                ← Back to Home
+<p class="text-muted">
 
-                            </a>
+Enter your Student Number to receive your login verification code.
 
-                        </div>
+</p>
 
-                    </div>
+</div>
 
-                </div>
+<form method="POST">
 
-            </div>
+<div class="mb-4">
 
-        </div>
+<label class="form-label">
 
-    </div>
+Student Number
+
+</label>
+
+<input
+type="text"
+name="student_number"
+class="form-control form-control-lg"
+placeholder="2024-00001"
+required>
+
+</div>
+<div class="mb-4">
+
+<label class="form-label">
+
+Password
+
+</label>
+
+<div class="input-group">
+
+<input
+type="password"
+name="password"
+id="password"
+class="form-control form-control-lg"
+required>
+
+<button
+class="btn btn-outline-secondary"
+type="button"
+onclick="togglePassword()">
+
+<i class="bi bi-eye"></i>
+
+</button>
+
+</div>
+
+</div>
+
+<button
+type="submit"
+class="btn btn-primary btn-lg w-100">
+
+<i class="bi bi-envelope-paper me-2"></i>
+
+Send Login OTP
+
+</button>
+
+</form>
+
+<div class="text-center mt-4">
+
+<a href="<?= BASE_URL ?>auth/signup.php">
+
+Don't have an account? Register
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 </section>
+<script>
 
-<?php include '../includes/footer.php'; ?>
+function togglePassword(){
+
+    const input = document.getElementById("password");
+    const icon = document.querySelector("#password + button i");
+
+    if(input.type === "password"){
+
+        input.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+
+    }else{
+
+        input.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+
+    }
+
+}
+
+</script>
+<?php include "../includes/footer.php"; ?>
