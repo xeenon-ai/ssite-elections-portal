@@ -81,7 +81,8 @@ LIMIT 10
 
 $leaders = $stmt->fetchAll();
 
-include "../includes/header.php";
+include "admin-header.php";
+
 
 ?>
 
@@ -89,25 +90,55 @@ include "../includes/header.php";
 
 <div class="container">
 
-<h2 class="fw-bold text-primary mb-5">
+<div class="d-flex justify-content-between align-items-center mb-5">
 
-<i class="bi bi-trophy-fill me-2"></i>
+<div>
+
+<h2 class="fw-bold text-primary mb-1">
+
+<i class="bi bi-trophy-fill text-warning me-2"></i>
 
 Election Results
 
 </h2>
 
-<div class="row g-4">
+<p class="text-muted mb-0">
+
+Live election statistics, leaderboard and analytics.
+
+</p>
+
+</div>
+
+<div>
+
+<a
+href="export-results.php"
+class="btn btn-danger rounded-pill px-4">
+
+<i class="bi bi-file-earmark-pdf-fill me-2"></i>
+
+Export Official Report
+
+</a>
+
+</div>
+
+</div>
+<div class="row g-4 mb-5">
 
 <div class="col-lg-3">
 
-<div class="card shadow border-0 text-center">
-
+<div class="card dashboard-card text-center h-100">
 <div class="card-body">
 
 <i class="bi bi-people-fill display-4 text-primary"></i>
 
-<h2><?= $totalStudents ?></h2>
+<h2 class="display-5 fw-bold text-primary">
+
+<?= $totalStudents ?>
+
+</h2>
 
 <p class="mb-0">Registered Students</p>
 
@@ -119,13 +150,17 @@ Election Results
 
 <div class="col-lg-3">
 
-<div class="card shadow border-0 text-center">
+<div class="card dashboard-card text-center h-100">
 
 <div class="card-body">
 
 <i class="bi bi-check2-square display-4 text-success"></i>
 
-<h2><?= $totalVotes ?></h2>
+<h2 class="display-5 fw-bold text-primary">
+
+<?= $totalStudents ?>
+
+</h2>
 
 <p class="mb-0">Votes Cast</p>
 
@@ -137,14 +172,17 @@ Election Results
 
 <div class="col-lg-3">
 
-<div class="card shadow border-0 text-center">
+<div class="card dashboard-card text-center h-100">
 
 <div class="card-body">
 
 <i class="bi bi-bar-chart-fill display-4 text-warning"></i>
 
-<h2><?= $turnout ?>%</h2>
+<h2 class="display-5 fw-bold text-warning">
 
+<?= $turnout ?>%
+
+</h2>
 <p class="mb-0">Turnout</p>
 
 </div>
@@ -155,13 +193,17 @@ Election Results
 
 <div class="col-lg-3">
 
-<div class="card shadow border-0 text-center">
+<div class="card dashboard-card text-center h-100">
 
 <div class="card-body">
 
 <i class="bi bi-person-badge-fill display-4 text-danger"></i>
 
-<h2><?= $totalCandidates ?></h2>
+<h2 class="display-5 fw-bold text-danger">
+
+<?= $totalCandidates ?>
+
+</h2>
 
 <p class="mb-0">Candidates</p>
 
@@ -175,13 +217,23 @@ Election Results
 
 <?php if(count($leaders) > 0): ?>
 
-<div class="card shadow-lg border-0 rounded-4 mt-5">
+<div class="card shadow-lg border-0 rounded-4 mt-5 winner-card">
 
 <div class="card-body text-center">
 
-<h3 class="text-warning fw-bold">
+<div class="mb-3">
 
-🏆 Election Leader
+<span class="badge bg-warning text-dark px-3 py-2 fs-6">
+
+🏆 WINNER
+
+</span>
+
+</div>
+
+<h3 class="fw-bold">
+
+Election Leader
 
 </h3>
 
@@ -219,13 +271,17 @@ width="150">
 
 </p>
 
-<h1 class="text-primary">
+<h1 class="display-3 fw-bold text-primary mb-0">
 
 <?= $leaders[0]['total_votes'] ?>
 
-Votes
-
 </h1>
+
+<p class="fs-4 text-muted">
+
+Total Votes
+
+</p>
 
 </div>
 
@@ -365,8 +421,104 @@ Votes
 
 </div>
 
+<div class="card shadow border-0 rounded-4 mt-5">
+
+<div class="card-body">
+
+<h3 class="fw-bold">
+
+📊 Vote Distribution
+
+</h3>
+
+<canvas id="votesChart" height="120"></canvas>
+
+</div>
+
+</div>
+
 </div>
 
 </section>
+
+<?php
+
+$chartLabels = [];
+$chartVotes = [];
+
+foreach($leaders as $candidate){
+
+    $chartLabels[] = $candidate['fullname'];
+    $chartVotes[] = $candidate['total_votes'];
+
+}
+
+?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById('votesChart');
+
+new Chart(ctx,{
+
+type:'bar',
+
+data:{
+
+labels:<?= json_encode($chartLabels) ?>,
+
+datasets:[{
+
+label:'Votes',
+
+data:<?= json_encode($chartVotes) ?>
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{
+
+display:false
+
+}
+
+},
+
+scales:{
+
+y:{
+
+beginAtZero:true,
+
+ticks:{
+
+stepSize:1
+
+}
+
+}
+
+}
+
+}
+
+});
+
+</script>
 
 <?php include "../includes/footer.php"; ?>

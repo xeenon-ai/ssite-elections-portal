@@ -12,24 +12,41 @@ if(!isset($_SESSION['admin_id'])){
 }
 
 $stmt = $pdo->query("
-SELECT *
-FROM activity_logs
-ORDER BY created_at DESC
-");
+SELECT
 
+activity_logs.*,
+
+admins.fullname AS admin_name,
+
+students.fullname AS student_name
+
+FROM activity_logs
+
+LEFT JOIN admins
+ON activity_logs.user_type='admin'
+AND activity_logs.user_id=admins.id
+
+LEFT JOIN students
+ON activity_logs.user_type='student'
+AND activity_logs.user_id=students.id
+
+ORDER BY activity_logs.created_at DESC
+");
 $logs = $stmt->fetchAll();
 
-include "../includes/header.php";
+include "admin-header.php";
+
 
 ?>
 
 <section class="py-5" style="background:#f5f7fa;min-height:90vh;">
 
 <div class="container">
-
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2 class="fw-bold text-primary">
+<div>
+
+<h2 class="fw-bold text-primary mb-1">
 
 <i class="bi bi-clock-history me-2"></i>
 
@@ -37,23 +54,50 @@ Activity Log
 
 </h2>
 
+<p class="text-muted mb-0">
+
+View administrator and student activities within the election system.
+
+</p>
+
+</div>
+
 <a
 href="dashboard.php"
-class="btn btn-secondary">
+class="btn btn-secondary rounded-pill">
 
-Back
+<i class="bi bi-arrow-left me-1"></i>
+
+Dashboard
 
 </a>
 
 </div>
 
-<div class="card shadow border-0">
+<div class="card dashboard-card border-0">
 
 <div class="card-body">
 
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+<h5 class="mb-0">
+
+Recent Activities
+
+</h5>
+
+<span class="badge bg-secondary">
+
+<?= count($logs) ?> Records
+
+</span>
+
+</div>
+
 <table class="table table-hover align-middle">
 
-<thead>
+<thead class="table-dark">
 
 <tr>
 
@@ -89,6 +133,8 @@ Back
 
 <span class="badge bg-danger">
 
+<i class="bi bi-shield-lock-fill me-1"></i>
+
 Administrator
 
 </span>
@@ -96,6 +142,8 @@ Administrator
 <?php else: ?>
 
 <span class="badge bg-primary">
+
+<i class="bi bi-person-fill me-1"></i>
 
 Student
 
@@ -107,19 +155,34 @@ Student
 
 <td>
 
-<?= $log['user_id'] ?>
+<?php if($log['user_type']=="admin"): ?>
+
+<?= htmlspecialchars($log['admin_name']) ?>
+
+<?php else: ?>
+
+<?= htmlspecialchars($log['student_name']) ?>
+
+<?php endif; ?> 
 
 </td>
 
 <td>
+
+<span class="fw-semibold">
 
 <?= htmlspecialchars($log['activity']) ?>
 
-</td>
+</span>
 
+</td>
 <td>
 
+<code>
+
 <?= htmlspecialchars($log['ip_address']) ?>
+
+</code>
 
 </td>
 

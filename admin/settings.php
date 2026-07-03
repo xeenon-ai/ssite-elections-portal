@@ -51,7 +51,8 @@ $stmt = $pdo->query("
 
 $settings = $stmt->fetch();
 
-include "../includes/header.php";
+include "admin-header.php";
+
 ?>
 
 <?php if(isset($_SESSION['settings_success'])): ?>
@@ -78,8 +79,7 @@ confirmButtonColor:"#001F54"
 
 <?php unset($_SESSION['settings_success']); endif; ?>
 
-<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
-
+<section class="py-5 dashboard-section">
 <div class="container">
 
 <div class="row justify-content-center">
@@ -90,7 +90,11 @@ confirmButtonColor:"#001F54"
 
 <div class="card-body p-5">
 
-<h2 class="fw-bold text-primary mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div>
+
+<h2 class="fw-bold text-primary mb-1">
 
 <i class="bi bi-gear-fill me-2"></i>
 
@@ -98,10 +102,28 @@ Election Settings
 
 </h2>
 
+<p class="text-muted mb-0">
+
+Configure election access and visibility for students.
+
+</p>
+
+</div>
+
+<a href="dashboard.php"
+
+class="btn btn-secondary rounded-pill">
+
+<i class="bi bi-arrow-left me-1"></i>
+
+Dashboard
+
+</a>
+
+</div>
+
 <form method="POST">
-
-<div class="form-check form-switch mb-4">
-
+<div class="border rounded-4 p-4 mb-4">
 <input
 class="form-check-input"
 type="checkbox"
@@ -116,7 +138,27 @@ Allow Students to Vote
 
 </div>
 
-<div class="form-check form-switch mb-4">
+<div class="border rounded-4 p-4 mb-4">
+
+<div class="d-flex justify-content-between align-items-center">
+
+<div>
+
+<h5 class="mb-1">
+
+Allow Students to View Results
+
+</h5>
+
+<small class="text-muted">
+
+Students can access the election results page.
+
+</small>
+
+</div>
+
+<div class="form-check form-switch">
 
 <input
 class="form-check-input"
@@ -124,14 +166,11 @@ type="checkbox"
 name="show_results"
 <?= $settings['show_results'] ? 'checked' : '' ?>>
 
-<label class="form-check-label">
-
-Allow Students to View Results
-
-</label>
+</div>
 
 </div>
 
+</div>
 <button class="btn btn-primary">
 
 <i class="bi bi-save me-2"></i>

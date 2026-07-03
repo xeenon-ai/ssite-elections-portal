@@ -40,7 +40,7 @@ if ($search != "") {
 
 $students = $stmt->fetchAll();
 
-include "../includes/header.php";
+include "admin-header.php";
 
 ?>
 
@@ -74,12 +74,37 @@ document.addEventListener("DOMContentLoaded", function(){
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2 class="fw-bold text-primary">
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div>
+
+<h2 class="fw-bold text-primary mb-1">
+
+<i class="bi bi-people-fill me-2"></i>
 
 Manage Students
 
 </h2>
 
+<p class="text-muted mb-0">
+
+Manage registered student accounts and voting status.
+
+</p>
+
+</div>
+
+<a href="add-student.php"
+
+class="btn btn-primary rounded-pill px-4">
+
+<i class="bi bi-person-plus-fill me-2"></i>
+
+Add Student
+
+</a>
+
+</div>
 <a href="dashboard.php" class="btn btn-secondary">
 
 <i class="bi bi-arrow-left"></i>
@@ -93,6 +118,12 @@ Back
 <form method="GET" class="mb-4">
 
 <div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-search"></i>
+
+</span>
 
 <input
 type="text"
@@ -226,15 +257,13 @@ Voted
 
 </td>
 
-<td>
+<td class="text-nowrap">
 
 <a
 href="view-student.php?id=<?= $student['id']; ?>"
-class="btn btn-info btn-sm">
+class="btn btn-outline-primary btn-sm rounded-pill me-1">
 
 <i class="bi bi-eye-fill"></i>
-
-View
 
 </a>
 
@@ -242,9 +271,9 @@ View
 
 <a
 href="toggle-student.php?id=<?= $student['id']; ?>"
-class="btn btn-warning btn-sm">
+class="btn btn-outline-warning btn-sm rounded-pill me-1">
 
-<i class="bi bi-person-x-fill"></i>
+<i class="bi bi-person-x-fill me-1"></i>
 
 Deactivate
 
@@ -254,9 +283,9 @@ Deactivate
 
 <a
 href="toggle-student.php?id=<?= $student['id']; ?>"
-class="btn btn-success btn-sm">
+class="btn btn-outline-success btn-sm rounded-pill me-1">
 
-<i class="bi bi-person-check-fill"></i>
+<i class="bi bi-person-check-fill me-1"></i>
 
 Activate
 
@@ -266,17 +295,14 @@ Activate
 
 <a
 href="request-delete-student.php?id=<?= $student['id']; ?>"
-class="btn btn-danger btn-sm delete-btn"
+class="btn btn-outline-danger btn-sm rounded-pill delete-btn"
 data-name="<?= htmlspecialchars($student['fullname']); ?>">
 
 <i class="bi bi-trash-fill"></i>
 
-Delete
-
 </a>
 
-</td>
-</tr>
+</td></tr>
 
 <?php endforeach; ?>
 

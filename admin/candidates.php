@@ -19,7 +19,8 @@ $stmt = $pdo->query("
 
 $candidates = $stmt->fetchAll();
 
-include "../includes/header.php";
+include "admin-header.php";
+
 
 ?>
 
@@ -53,17 +54,39 @@ document.addEventListener("DOMContentLoaded", function(){
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2 class="fw-bold text-primary">
+<div>
+
+<h2 class="fw-bold text-primary mb-1">
+
+<i class="bi bi-person-badge-fill me-2"></i>
 
 Manage Candidates
 
 </h2>
 
-<a
-href="add-candidate.php"
-class="btn btn-primary">
+<p class="text-muted mb-0">
 
-<i class="bi bi-plus-circle me-2"></i>
+Manage election candidates and their information.
+
+</p>
+
+</div>
+
+<div>
+
+<a href="dashboard.php"
+class="btn btn-secondary rounded-pill me-2">
+
+<i class="bi bi-arrow-left me-1"></i>
+
+Dashboard
+
+</a>
+
+<a href="add-candidate.php"
+class="btn btn-primary rounded-pill px-4">
+
+<i class="bi bi-person-plus-fill me-2"></i>
 
 Add Candidate
 
@@ -71,7 +94,8 @@ Add Candidate
 
 </div>
 
-<div class="card shadow border-0">
+</div>
+<div class="card dashboard-card border-0">
 
 <div class="card-body">
 
@@ -93,7 +117,11 @@ Add Candidate
 
 <th>Status</th>
 
-<th width="180">Actions</th>
+<th class="text-center" width="220">
+
+Actions
+
+</th>
 
 </tr>
 
@@ -117,15 +145,17 @@ Add Candidate
 
 <img
 src="../uploads/<?= htmlspecialchars($candidate['photo']); ?>"
-width="60"
-height="60"
-style="object-fit:cover;border-radius:50%;">
+width="70"
+height="70"
+class="rounded-circle shadow"
+style="object-fit:cover;">
 
 <?php else: ?>
 
 <img
 src="../assets/images/default-user.png"
-width="60">
+width="70"
+class="rounded-circle shadow">
 
 <?php endif; ?>
 
@@ -155,6 +185,8 @@ width="60">
 
 <span class="badge bg-success">
 
+<i class="bi bi-check-circle-fill me-1"></i>
+
 Active
 
 </span>
@@ -162,6 +194,8 @@ Active
 <?php else: ?>
 
 <span class="badge bg-danger">
+
+<i class="bi bi-x-circle-fill me-1"></i>
 
 Inactive
 
@@ -171,11 +205,13 @@ Inactive
 
 </td>
 
-<td>
+<td class="text-center text-nowrap">
 
 <a
 href="edit-candidate.php?id=<?= $candidate['id']; ?>"
-class="btn btn-warning btn-sm">
+class="btn btn-outline-warning btn-sm rounded-pill me-1">
+
+<i class="bi bi-pencil-fill me-1"></i>
 
 Edit
 
@@ -183,8 +219,10 @@ Edit
 
 <a
 href="delete-candidate.php?id=<?= $candidate['id']; ?>"
-class="btn btn-danger btn-sm delete-btn"
+class="btn btn-outline-danger btn-sm rounded-pill delete-btn"
 data-name="<?= htmlspecialchars($candidate['fullname']); ?>">
+
+<i class="bi bi-trash-fill me-1"></i>
 
 Delete
 
