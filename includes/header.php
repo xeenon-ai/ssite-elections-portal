@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+$current = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
@@ -33,71 +34,116 @@ require_once __DIR__ . '/../config/config.php';
 <body>
 
 <!-- NAVBAR -->
-
 <nav class="navbar navbar-expand-lg navbar-dark shadow sticky-top">
-    <div class="container">
 
-        <a class="navbar-brand fw-bold"
-           href="#">
+<div class="container">
+
+<a class="navbar-brand d-flex align-items-center"
+href="<?= BASE_URL ?>index.php">
 
 <img
-    src="<?= BASE_URL ?>assets/images/ssite-logo.png"
-    alt="SSITE Logo"
-    class="img-fluid"
-    style="max-width:90px;">
-    
-<span class="fw-bold">
-    SSITE Elections Portal
-</span>
+src="<?= BASE_URL ?>assets/images/ssite-logo.png"
+alt="SSITE Logo"
+width="55"
+class="me-3">
 
-        </a>
+<div>
 
-        <button class="navbar-toggler"
-                data-bs-toggle="collapse"
-                data-bs-target="#menu">
+<div class="fw-bold fs-5">
 
-            <span class="navbar-toggler-icon"></span>
+SSITE Elections Portal
 
-        </button>
+</div>
 
-        <div class="collapse navbar-collapse"
-             id="menu">
+<small class="text-light opacity-50">
 
-            <ul class="navbar-nav ms-auto">
+College of Information Technology Education
 
-                <li class="nav-item">
+</small>
 
-                    <a class="nav-link active"
-                       href="#">Home</a>
+</div>
 
-                </li>
+</a>
 
-                <li class="nav-item">
+<button
+class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#menu">
 
-                    <a class="nav-link"
-                       href="#about">About</a>
+<span class="navbar-toggler-icon"></span>
 
-                </li>
+</button>
 
-<li class="nav-item me-2">
+<div class="collapse navbar-collapse justify-content-end"
+id="menu">
 
-<a class="btn btn-outline-light" href="<?= BASE_URL ?>auth/login.php">
-    Login
+<ul class="navbar-nav align-items-lg-center">
+
+<li class="nav-item">
+
+<a class="nav-link <?= $current=="index.php" ? "active" : "" ?>"
+href="<?= BASE_URL ?>index.php">
+
+Home
+
 </a>
 
 </li>
 
 <li class="nav-item">
 
-<a class="btn btn-warning ms-2" href="<?= BASE_URL ?>auth/signup.php">
-    Sign Up
+<a class="nav-link"
+href="<?= BASE_URL ?>index.php#about">
+
+About
+
 </a>
 
 </li>
-            </ul>
 
-        </div>
+<?php
 
-    </div>
+$hideButtons = in_array($current,[
+"login.php",
+"signup.php",
+"otp.php"
+]);
+
+if(!$hideButtons):
+
+?>
+
+<li class="nav-item ms-lg-3">
+
+<a
+href="<?= BASE_URL ?>auth/login.php"
+class="btn btn-light rounded-pill px-4">
+
+Login
+
+</a>
+
+</li>
+
+<li class="nav-item ms-2">
+
+<a
+href="<?= BASE_URL ?>auth/signup.php"
+class="btn btn-warning rounded-pill px-4">
+
+Register
+
+</a>
+
+</li>
+
+<?php endif; ?>
+
+</ul>
+
+</div>
+
+</div>
 
 </nav>

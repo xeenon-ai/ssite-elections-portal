@@ -228,8 +228,7 @@ include "../includes/header.php";
 
 <div class="col-lg-8">
 
-<div class="card border-0 shadow-lg rounded-4">
-
+<div class="card dashboard-card border-0">
 <div class="card-body p-5">
 
 <div class="text-center mb-4">
@@ -240,7 +239,9 @@ width="90"
 alt="SSITE Logo"
 class="mb-3">
 
-<h2 class="fw-bold text-primary">
+<h2 class="fw-bold text-primary mb-2">
+
+<i class="bi bi-person-plus-fill me-2"></i>
 
 Student Registration
 
@@ -248,15 +249,18 @@ Student Registration
 
 <p class="text-muted">
 
-Create your SSITE Elections Portal account.
-
-<br>
-
-Only
-<strong>@phinmaed.com</strong>
-email addresses are allowed.
+Create your secure SSITE Elections Portal account.
 
 </p>
+
+</div>
+
+<div class="alert alert-light border rounded-4 mb-4">
+
+<i class="bi bi-info-circle-fill text-primary me-2"></i>
+
+Please use your official <strong>@phinmaed.com</strong> email address.
+An email verification code will be sent after registration.
 
 </div>
 
@@ -296,12 +300,22 @@ Student Number
 
 </label>
 
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-person-vcard-fill"></i>
+
+</span>
+
 <input
 type="text"
 name="student_number"
 class="form-control"
 placeholder="2024-00001"
 required>
+
+</div>
 
 </div>
 
@@ -313,12 +327,22 @@ Full Name
 
 </label>
 
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-person-fill"></i>
+
+</span>
+
 <input
 type="text"
 name="fullname"
 class="form-control"
 placeholder="Juan Dela Cruz"
 required>
+
+</div>
 
 </div>
 
@@ -330,6 +354,13 @@ required>
 PHINMA Email
 
 </label>
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-envelope-fill"></i>
+
+</span>
 
 <input
 type="email"
@@ -338,6 +369,8 @@ id="email"
 class="form-control"
 placeholder="example@phinmaed.com"
 required>
+
+</div>
 
 <div class="form-text">
 
@@ -413,7 +446,7 @@ Section
 type="text"
 name="section"
 class="form-control"
-placeholder="A"
+placeholder="BSIT 3-1"
 required>
 
 </div>
@@ -432,11 +465,18 @@ Password
 
 <div class="input-group">
 
+<span class="input-group-text">
+
+<i class="bi bi-lock-fill"></i>
+
+</span>
+
 <input
 type="password"
 name="password"
 id="password"
 class="form-control"
+placeholder="Enter your password"
 required>
 
 <button
@@ -449,7 +489,6 @@ onclick="togglePassword('password',this)">
 </button>
 
 </div>
-
 <div id="strengthText"
 class="form-text text-muted">
 
@@ -469,11 +508,18 @@ Confirm Password
 
 <div class="input-group">
 
+<span class="input-group-text">
+
+<i class="bi bi-lock-fill"></i>
+
+</span>
+
 <input
 type="password"
 name="confirm_password"
 id="confirm_password"
 class="form-control"
+placeholder="Confirm your password"
 required>
 
 <button
@@ -503,8 +549,11 @@ onclick="togglePassword('confirm_password',this)">
         for="terms">
 
         I agree to the
-        <a href="#" class="text-decoration-none">
-            Terms and Conditions
+<a
+href="<?= BASE_URL ?>terms.php"
+target="_blank"
+class="text-decoration-none">
+            <strong>Terms and Conditions</strong>.
         </a>
 
     </label>
@@ -513,7 +562,7 @@ onclick="togglePassword('confirm_password',this)">
 
 <button
     type="submit"
-    class="btn btn-primary btn-lg w-100">
+    class="btn btn-primary btn-lg rounded-pill w-100">
 
     <i class="bi bi-person-plus-fill me-2"></i>
 
@@ -525,13 +574,27 @@ onclick="togglePassword('confirm_password',this)">
 
 <div class="text-center mt-4">
 
-    Already have an account?
+<p class="mb-2">
 
-    <a href="<?= BASE_URL ?>auth/login.php">
+Already have an account?
 
-        Login here
+<a href="<?= BASE_URL ?>auth/login.php">
 
-    </a>
+Login here
+
+</a>
+
+</p>
+
+<a
+href="<?= BASE_URL ?>index.php"
+class="text-decoration-none">
+
+<i class="bi bi-arrow-left-circle me-1"></i>
+
+Back to Homepage
+
+</a>
 
 </div>
 

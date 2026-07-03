@@ -26,15 +26,94 @@ body{
 /* ---------- Navbar ---------- */
 
 .navbar{
+
     background:#001F54;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+    padding:10px 0;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
 }
 
-/* ---------- Footer ---------- */
+.navbar-brand{
 
-footer{
-    background:#001F54 !important;
-    margin-top:60px;
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.navbar-brand img{
+
+    transition:.3s;
+
+}
+
+.navbar-brand:hover img{
+
+    transform:rotate(-5deg) scale(1.05);
+
+}
+
+.navbar-nav .nav-link{
+
+    color:rgba(255,255,255,.85);
+
+    font-weight:500;
+
+    margin:0 8px;
+
+}
+
+.navbar-nav .nav-link:hover{
+
+    color:#ffc107;
+
+}
+
+.navbar-nav .nav-link.active{
+
+    color:#ffc107 !important;
+
+}
+/* ==========================================
+   FOOTER
+========================================== */
+
+.footer{
+
+    background:#001F54;
+
+}
+
+.footer a{
+
+    color:white;
+
+    transition:.3s;
+
+}
+
+.footer a:hover{
+
+    color:#ffc107;
+
+    padding-left:6px;
+
+}
+
+.footer img{
+
+    transition:.3s;
+
+}
+
+.footer img:hover{
+
+    transform:rotate(-5deg) scale(1.05);
+
 }
 
 /* ---------- Cards ---------- */

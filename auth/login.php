@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
 <div class="col-lg-5">
 
-<div class="card border-0 shadow-lg rounded-4">
+<div class="card dashboard-card border-0">
 
 <div class="card-body p-5">
 
@@ -224,7 +224,9 @@ document.addEventListener("DOMContentLoaded", function(){
 width="90"
 class="mb-3">
 
-<h2 class="fw-bold text-primary">
+<h2 class="fw-bold text-primary mb-2">
+
+<i class="bi bi-person-circle me-2"></i>
 
 Student Login
 
@@ -232,9 +234,16 @@ Student Login
 
 <p class="text-muted">
 
-Enter your Student Number to receive your login verification code.
+Sign in securely using your student credentials to receive your one-time verification code.
 
 </p>
+</div>
+
+<div class="alert alert-light border rounded-4 mb-4">
+
+<i class="bi bi-shield-check me-2 text-primary"></i>
+
+Your account is protected with OTP verification for every login.
 
 </div>
 
@@ -248,13 +257,22 @@ Student Number
 
 </label>
 
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-person-vcard-fill"></i>
+
+</span>
+
 <input
 type="text"
 name="student_number"
 class="form-control form-control-lg"
-placeholder="2024-00001"
+placeholder="Enter your student number"
 required>
 
+</div>
 </div>
 <div class="mb-4">
 
@@ -266,11 +284,18 @@ Password
 
 <div class="input-group">
 
+<span class="input-group-text">
+
+<i class="bi bi-lock-fill"></i>
+
+</span>
+
 <input
 type="password"
 name="password"
 id="password"
 class="form-control form-control-lg"
+placeholder="Enter your password"
 required>
 
 <button
@@ -288,7 +313,7 @@ onclick="togglePassword()">
 
 <button
 type="submit"
-class="btn btn-primary btn-lg w-100">
+class="btn btn-primary btn-lg rounded-pill w-100">
 
 <i class="bi bi-envelope-paper me-2"></i>
 
@@ -298,11 +323,35 @@ Send Login OTP
 
 </form>
 
+<p class="text-center text-muted small mt-3 mb-0">
+
+<i class="bi bi-envelope-check me-1"></i>
+
+A verification code will be sent to your registered email address.
+
+</p>
+
 <div class="text-center mt-4">
+
+<p class="mb-2">
+
+Don't have an account?
 
 <a href="<?= BASE_URL ?>auth/signup.php">
 
-Don't have an account? Register
+Register here
+
+</a>
+
+</p>
+
+<a
+href="<?= BASE_URL ?>index.php"
+class="text-decoration-none">
+
+<i class="bi bi-arrow-left-circle me-1"></i>
+
+Back to Homepage
 
 </a>
 
