@@ -5,7 +5,7 @@ $pageTitle = "Vote Submitted";
 require_once "../config/config.php";
 require_once "../includes/session.php";
 
-include "../includes/header.php";
+include "student-header.php";
 
 ?>
 

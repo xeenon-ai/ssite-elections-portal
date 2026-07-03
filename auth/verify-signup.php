@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <?php unset($_SESSION['success']); endif; ?>
 
-<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
+<section class="py-5 dashboard-section">
 
 <div class="container">
 
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <div class="col-lg-5">
 
-<div class="card border-0 shadow-lg rounded-4">
+<div class="card dashboard-card border-0">
 
 <div class="card-body p-5">
 
@@ -130,7 +130,18 @@ width="90"
 class="mb-3"
 alt="SSITE Logo">
 
-<h2 class="fw-bold text-primary">
+<div class="alert alert-light border rounded-4 mb-4">
+
+<i class="bi bi-info-circle-fill text-primary me-2"></i>
+
+Your verification code will expire in
+<strong>5 minutes</strong>.
+
+</div>
+
+<h2 class="fw-bold text-primary mb-2">
+
+<i class="bi bi-envelope-check-fill me-2"></i>
 
 Verify Your Account
 
@@ -138,27 +149,12 @@ Verify Your Account
 
 <p class="text-muted">
 
-Enter the 6-digit verification code sent to your email.
+We've sent a 6-digit verification code to your PHINMA email address.
 
 </p>
 
 </div>
 
-<?php if (!empty($error)): ?>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    Swal.fire({
-        icon: "error",
-        title: "Verification Failed",
-        text: "<?= htmlspecialchars($error, ENT_QUOTES) ?>"
-    });
-
-});
-</script>
-
-<?php endif; ?>
 
 <form method="POST">
 
@@ -170,19 +166,35 @@ Verification Code
 
 </label>
 
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-key-fill"></i>
+
+</span>
+
 <input
 type="text"
 name="otp"
 maxlength="6"
 class="form-control form-control-lg text-center"
+
+style="letter-spacing:8px;font-size:24px;font-weight:bold;"
+
 placeholder="123456"
+
+autocomplete="one-time-code"
+
 required>
+
+</div>
 
 </div>
 
 <button
 type="submit"
-class="btn btn-primary btn-lg w-100">
+class="btn btn-primary btn-lg rounded-pill w-100">
 
 <i class="bi bi-shield-check me-2"></i>
 
@@ -194,9 +206,33 @@ Verify Account
 
 <div class="text-center mt-4">
 
-<a href="resend-otp.php">
+<p class="text-muted mb-2">
 
-Didn't receive the code? Resend OTP
+Didn't receive the verification code?
+
+</p>
+
+<a
+href="resend-otp.php"
+class="btn btn-outline-primary rounded-pill">
+
+<i class="bi bi-arrow-clockwise me-2"></i>
+
+Resend OTP
+
+</a>
+
+</div>
+
+<div class="text-center mt-3">
+
+<a
+href="login.php"
+class="text-decoration-none">
+
+<i class="bi bi-arrow-left-circle me-1"></i>
+
+Back to Login
 
 </a>
 
@@ -215,3 +251,20 @@ Didn't receive the code? Resend OTP
 </section>
 
 <?php include "../includes/footer.php"; ?>
+
+
+<?php if (!empty($error)): ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    Swal.fire({
+        icon: "error",
+        title: "Verification Failed",
+        text: "<?= htmlspecialchars($error, ENT_QUOTES) ?>"
+    });
+
+});
+</script>
+
+<?php endif; ?>

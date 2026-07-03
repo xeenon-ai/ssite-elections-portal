@@ -25,23 +25,25 @@ $stmt->execute([
 
 $student = $stmt->fetch();
 
-include "../includes/header.php";
+include "student-header.php";
 
 ?>
 
-<section class="py-5">
-
+<section class="py-5 dashboard-section">
 <div class="container">
 
 <div class="row justify-content-center">
 
 <div class="col-lg-8">
-
-<div class="card shadow-lg border-0 rounded-4">
+<div class="card dashboard-card border-0">
 
 <div class="card-body p-5">
 
-<h2 class="fw-bold text-primary">
+<div class="text-center mb-5">
+
+<i class="bi bi-person-circle display-1 text-primary"></i>
+
+<h2 class="fw-bold text-primary mt-3">
 
 Welcome,
 
@@ -51,21 +53,115 @@ Welcome,
 
 </h2>
 
-<hr>
+<div class="text-center mb-4">
 
-<p>
+<span class="badge bg-success fs-6 px-4 py-2 rounded-pill">
 
-<strong>Student Number:</strong>
+Verified Student
+
+</span>
+
+</div>
+
+<p class="text-muted">
+
+Student Dashboard
+
+</p>
+
+</div>
+
+<div class="row g-4 mb-4">
+
+<div class="col-md-6">
+
+<div class="card border-0 bg-light">
+
+<div class="card-body">
+
+<i class="bi bi-person-vcard-fill text-primary"></i>
+
+<strong> Student Number</strong>
+
+<p class="mb-0 mt-2">
 
 <?= htmlspecialchars($student['student_number']); ?>
 
 </p>
 
-<p>
+</div>
 
-<strong>Course:</strong>
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="card border-0 bg-light">
+
+<div class="card-body">
+
+<i class="bi bi-book-fill text-success"></i>
+
+<strong> Course</strong>
+
+<p class="mb-0 mt-2">
 
 <?= htmlspecialchars($student['course']); ?>
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="card border-0 bg-light">
+
+<div class="card-body">
+
+<i class="bi bi-mortarboard-fill text-warning"></i>
+
+<strong> Year Level</strong>
+
+<p class="mb-0 mt-2">
+
+<?= htmlspecialchars($student['year_level']); ?>
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="card border-0 bg-light">
+
+<div class="card-body">
+
+<i class="bi bi-people-fill text-danger"></i>
+
+<strong> Section</strong>
+
+<p class="mb-0 mt-2">
+
+<?= htmlspecialchars($student['section']); ?>
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 </p>
 
@@ -89,25 +185,67 @@ Welcome,
 
 <div class="alert alert-success">
 
-✅ You have already voted.
+<div class="alert alert-success rounded-4">
+
+<i class="bi bi-check-circle-fill me-2"></i>
+
+You have successfully cast your vote.
+
+Thank you for participating in the SSITE Election.
 
 </div>
 
 <?php else: ?>
 
-<div class="alert alert-warning">
+<div class="alert alert-warning rounded-4">
 
-You have not voted yet.
+<i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+You haven't voted yet.
+
+Please cast your vote before the election closes.
 
 </div>
 
+<hr class="my-5">
+
+<h4 class="fw-bold mb-4">
+
+⚡ Quick Actions
+
+</h4>
+
+<div class="row g-3">
+
+<div class="col-md-6">
+
 <a
 href="vote.php"
-class="btn btn-success btn-lg">
+class="btn btn-primary w-100 rounded-pill py-3">
+
+<i class="bi bi-check2-square me-2"></i>
 
 Vote Now
 
 </a>
+
+</div>
+
+<div class="col-md-6">
+
+<a
+href="../auth/logout.php"
+class="btn btn-outline-danger w-100 rounded-pill py-3">
+
+<i class="bi bi-box-arrow-right me-2"></i>
+
+Logout
+
+</a>
+
+</div>
+
+</div>
 
 <?php endif; ?>
 

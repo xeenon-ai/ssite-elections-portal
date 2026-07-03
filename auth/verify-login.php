@@ -98,15 +98,14 @@ text:"<?= htmlspecialchars($error, ENT_QUOTES); ?>"
 
 <?php endif; ?>
 
-<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
-
+<section class="py-5 dashboard-section">
 <div class="container">
 
 <div class="row justify-content-center">
 
 <div class="col-lg-5">
 
-<div class="card border-0 shadow-lg rounded-4">
+<div class="card dashboard-card border-0">
 
 <div class="card-body p-5">
 
@@ -114,7 +113,18 @@ text:"<?= htmlspecialchars($error, ENT_QUOTES); ?>"
 
 <img src="<?= BASE_URL ?>assets/images/ssite-logo.png" width="90" class="mb-3">
 
-<h2 class="fw-bold text-primary">
+<div class="alert alert-light border rounded-4 mb-4">
+
+<i class="bi bi-envelope-check-fill text-primary me-2"></i>
+
+A verification code has been sent to your registered email.
+The code is valid for <strong>5 minutes</strong>.
+
+</div>
+
+<h2 class="fw-bold text-primary mb-2">
+
+<i class="bi bi-shield-lock-fill me-2"></i>
 
 Login Verification
 
@@ -122,7 +132,7 @@ Login Verification
 
 <p class="text-muted">
 
-Enter the 6-digit code sent to your email.
+Enter the 6-digit verification code sent to your registered email address.
 
 </p>
 
@@ -138,25 +148,63 @@ Verification Code
 
 </label>
 
+<div class="input-group">
+
+<span class="input-group-text">
+
+<i class="bi bi-key-fill"></i>
+
+</span>
+
 <input
 type="text"
 name="otp"
 maxlength="6"
 class="form-control form-control-lg text-center"
+
+style="letter-spacing:8px;font-size:24px;font-weight:bold;"
+
 placeholder="123456"
+
+autocomplete="one-time-code"
+
 required>
+
+</div>
 
 </div>
 
 <button
 type="submit"
-class="btn btn-primary btn-lg w-100">
+class="btn btn-primary btn-lg rounded-pill w-100">
 
 Verify Login
 
-</button>s
+</button>
+
+<p class="text-center text-muted small mt-3 mb-0">
+
+<i class="bi bi-clock-history me-1"></i>
+
+Didn't receive the code? Check your spam folder or request a new login.
+
+</p>
 
 </form>
+
+<div class="text-center mt-4">
+
+<a
+href="<?= BASE_URL ?>auth/login.php"
+class="text-decoration-none">
+
+<i class="bi bi-arrow-left-circle me-1"></i>
+
+Back to Login
+
+</a>
+
+</div>
 
 </div>
 

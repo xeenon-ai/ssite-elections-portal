@@ -83,12 +83,11 @@ $stmt = $pdo->query("
 
 $candidates = $stmt->fetchAll();
 
-include "../includes/header.php";
+include "student-header.php";
 
 ?>
 
-<section class="py-5" style="background:#f5f7fa;min-height:90vh;">
-
+<section class="py-5 dashboard-section">
 <div class="container">
 
 <div class="text-center mb-5">
@@ -98,11 +97,17 @@ src="<?= BASE_URL ?>assets/images/ssite-logo.png"
 width="100"
 class="mb-3">
 
-<h2 class="fw-bold text-primary">
+<h2 class="display-5 fw-bold text-primary">
 
-SSITE Elections 2026
+🗳️ SSITE Elections 2026
 
 </h2>
+
+<p class="text-muted">
+
+Student Society of Information Technology Education
+
+</p>
 
 <p class="lead">
 
@@ -112,6 +117,16 @@ Welcome,
 
 </p>
 
+<div class="mt-3">
+
+<span class="badge bg-success fs-6 rounded-pill px-4 py-2">
+
+🟢 Voting is Open
+
+</span>
+
+</div>
+
 <p class="text-muted">
 
 Choose exactly <strong>3 candidates</strong>.
@@ -120,11 +135,37 @@ Once submitted, your vote cannot be changed.
 
 </p>
 
-<div class="alert alert-warning mt-3">
+<div class="alert alert-light border rounded-4 mt-4">
 
-<i class="bi bi-exclamation-triangle-fill"></i>
+<h5 class="fw-bold text-primary">
 
-You may only vote once.
+<i class="bi bi-info-circle-fill me-2"></i>
+
+Voting Instructions
+
+</h5>
+
+<ul class="mb-0 text-start">
+
+<li>Select exactly <strong>3 candidates</strong>.</li>
+
+<li>Your vote can only be submitted once.</li>
+
+<li>Your vote cannot be changed after submission.</li>
+
+<li>Please review your selections before submitting.</li>
+
+</ul>
+
+</div>
+
+
+<div class="progress mb-4" style="height:12px;">
+
+<div
+id="voteProgress"
+class="progress-bar bg-success"
+style="width:0%;">
 
 </div>
 
@@ -134,71 +175,88 @@ You may only vote once.
 
 <div class="row g-4">
 
-
 <?php foreach($candidates as $candidate): ?>
 
 <div class="col-md-4">
 
-<div class="card h-100 shadow border-0 rounded-4 candidate-card">
+<div class="card dashboard-card candidate-card h-100">
 
-<?php if(!empty($candidate['photo'])): ?>
+    <!-- Selected Ribbon -->
+    <div class="selectedRibbon d-none">
 
-<img
-src="../uploads/<?= htmlspecialchars($candidate['photo']); ?>"
-class="card-img-top"
-style="height:280px;object-fit:cover;">
+        <i class="bi bi-check-circle-fill me-1"></i>
 
-<?php else: ?>
+        Selected
 
-<img
-src="<?= BASE_URL ?>assets/images/default-user.png"
-class="card-img-top"
-style="height:280px;object-fit:cover;">
+    </div>
 
-<?php endif; ?>
+    <!-- Candidate Photo -->
 
-<div class="card-body">
+    <?php if(!empty($candidate['photo'])): ?>
 
-<h4 class="fw-bold text-primary">
+        <img
+        src="../uploads/<?= htmlspecialchars($candidate['photo']); ?>"
+        class="card-img-top candidate-photo"
+        alt="<?= htmlspecialchars($candidate['fullname']); ?>">
 
-<?= htmlspecialchars($candidate['fullname']); ?>
+    <?php else: ?>
 
-</h4>
+        <img
+        src="<?= BASE_URL ?>assets/images/default-user.png"
+        class="card-img-top candidate-photo"
+        alt="Default Photo">
 
-<p class="text-muted">
+    <?php endif; ?>
 
-<?= htmlspecialchars($candidate['year_level']); ?>
+    <div class="card-body text-center d-flex flex-column">
 
-•
-<?= htmlspecialchars($candidate['section']); ?>
+        <h4 class="fw-bold text-primary mb-2">
 
-</p>
+            <?= htmlspecialchars($candidate['fullname']); ?>
 
-<hr>
+        </h4>
 
-<p>
+        <span class="badge bg-primary rounded-pill mb-3">
 
-<?= nl2br(htmlspecialchars($candidate['bio'])); ?>
+            Candidate
 
-</p>
+        </span>
 
-<div class="form-check mt-4">
+        <p class="text-muted mb-3">
 
-<input
-class="form-check-input candidateCheck"
-type="checkbox"
-name="candidates[]"
-value="<?= $candidate['id']; ?>">
+            <?= htmlspecialchars($candidate['year_level']); ?>
 
-<label class="form-check-label fw-bold">
+            •
 
-Vote for this Candidate
+            <?= htmlspecialchars($candidate['section']); ?>
 
-</label>
+        </p>
 
-</div>
+        <hr>
 
-</div>
+        <p class="flex-grow-1">
+
+            <?= nl2br(htmlspecialchars($candidate['bio'])); ?>
+
+        </p>
+
+        <div class="mt-4">
+
+            <input
+            class="candidateCheck form-check-input"
+            type="checkbox"
+            name="candidates[]"
+            value="<?= $candidate['id']; ?>">
+
+            <span class="voteStatus badge bg-light text-dark ms-2">
+
+                Not Selected
+
+            </span>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -206,11 +264,9 @@ Vote for this Candidate
 
 <?php endforeach; ?>
 
-</div>
-
 <div class="text-center mt-5">
 
-<div class="alert alert-primary d-inline-block px-5">
+<div class="alert alert-primary rounded-pill d-inline-block px-5 shadow">
 
 <h4 class="mb-0">
 
@@ -229,7 +285,9 @@ Selected
 </div>
 
 <button
-class="btn btn-success btn-lg mt-3">
+id="submitVote"
+disabled
+class="btn btn-success btn-lg rounded-pill px-5 mt-3">
 
 <i class="bi bi-check-circle-fill me-2"></i>
 
@@ -245,42 +303,91 @@ Submit My Votes
 
 </section>
 <script>
-
 const checks = document.querySelectorAll(".candidateCheck");
+const cards = document.querySelectorAll(".candidate-card");
+
 const counter = document.getElementById("selectedCount");
+const progress = document.getElementById("voteProgress");
+const submitBtn = document.getElementById("submitVote");
 const form = document.getElementById("voteForm");
 
-checks.forEach(check => {
+function updateSelection(){
 
-    check.addEventListener("change", () => {
+    const selected = document.querySelectorAll(".candidateCheck:checked");
 
-        let selected = document.querySelectorAll(".candidateCheck:checked");
+    counter.textContent = selected.length;
 
-        if(selected.length > 3){
+    progress.style.width = (selected.length / 3 * 100) + "%";
 
-            check.checked = false;
+    submitBtn.disabled = selected.length !== 3;
 
-            Swal.fire({
-                icon:"warning",
-                title:"Maximum Reached",
-                text:"You may only vote for 3 candidates."
-            });
+    cards.forEach(card=>{
 
-            selected = document.querySelectorAll(".candidateCheck:checked");
+        const badge = card.querySelector(".voteStatus");
+        const ribbon = card.querySelector(".selectedRibbon");
+        const checkbox = card.querySelector(".candidateCheck");
 
-        }
+        card.classList.remove("selected");
 
-        counter.innerHTML = selected.length;
+        ribbon.classList.add("d-none");
+
+        badge.className = "voteStatus badge bg-light text-dark ms-2";
+        badge.innerHTML = "Not Selected";
+
+        checkbox.disabled = selected.length >= 3 && !checkbox.checked;
+
+    });
+
+    selected.forEach(item=>{
+
+        const card = item.closest(".candidate-card");
+
+        const badge = card.querySelector(".voteStatus");
+
+        const ribbon = card.querySelector(".selectedRibbon");
+
+        card.classList.add("selected");
+
+        ribbon.classList.remove("d-none");
+
+        badge.className = "voteStatus badge bg-success ms-2";
+
+        badge.innerHTML =
+        '<i class="bi bi-check-circle-fill me-1"></i>Selected';
+
+    });
+
+}
+
+checks.forEach(check=>{
+
+    check.addEventListener("change",updateSelection);
+
+});
+
+cards.forEach(card=>{
+
+    card.addEventListener("click",function(e){
+
+        if(e.target.closest(".candidateCheck")) return;
+
+        const checkbox = this.querySelector(".candidateCheck");
+
+        if(checkbox.disabled) return;
+
+        checkbox.checked = !checkbox.checked;
+
+        checkbox.dispatchEvent(new Event("change"));
 
     });
 
 });
 
-form.addEventListener("submit", function(e){
+form.addEventListener("submit",function(e){
 
     const selected = document.querySelectorAll(".candidateCheck:checked");
 
-    if(selected.length != 3){
+    if(selected.length !== 3){
 
         e.preventDefault();
 
@@ -290,7 +397,7 @@ form.addEventListener("submit", function(e){
 
             title:"Incomplete Vote",
 
-            text:"Please select exactly 3 candidates."
+            text:"Please select exactly three candidates."
 
         });
 
@@ -304,13 +411,13 @@ form.addEventListener("submit", function(e){
 
         icon:"question",
 
-        title:"Submit Your Vote?",
+        title:"Submit Vote?",
 
-        html:"<b>You cannot change your vote after submission.</b><br><br>Do you want to continue?",
+        html:"<b>Your vote cannot be changed after submission.</b>",
 
         showCancelButton:true,
 
-        confirmButtonText:"Yes, Submit",
+        confirmButtonText:"Submit Vote",
 
         cancelButtonText:"Cancel",
 
@@ -328,6 +435,7 @@ form.addEventListener("submit", function(e){
 
 });
 
+updateSelection();
 </script>
 
 <?php include "../includes/footer.php"; ?>

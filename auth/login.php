@@ -35,49 +35,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $student = $stmt->fetch();
 
-        if (!$student['is_active']) {
-
-    $error = "Your account has been deactivated. Please contact the administrator.";
-
-}
-
-if (!$student) {
-
-    $error = "Student number not found.";
-
-} elseif (!$student['is_verified']) {
-
-    $error = "Your account is not yet verified.";
-
-} elseif (!$student['is_active']) {
-
-    $error = "Your account has been deactivated. Please contact the administrator.";
-
-} else {
-
-    // Password verification
-    // Generate OTP
-    // Redirect to verify-login.php
-
-}
-
-if (!$student) {
+        if (!$student) {
 
     $error = "Student account not found.";
 
 }
-
 elseif (!password_verify($password, $student['password'])) {
 
     $error = "Incorrect password.";
 
 }
-
 elseif (!$student['is_verified']) {
 
     $error = "Please verify your account before logging in.";
 
 }
+elseif (!$student['is_active']) {
+
+    $error = "Your account has been deactivated. Please contact the administrator.";
+
+}
+
         if (empty($error)) {
 
     // Generate OTP
@@ -158,53 +136,6 @@ elseif (!$student['is_verified']) {
 include "../includes/header.php";
 ?>
 
-<?php if (isset($_SESSION['success'])): ?>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function(){
-
-    Swal.fire({
-
-        icon: "success",
-
-        title: "Login OTP",
-
-        text: "<?= $_SESSION['success']; ?>",
-
-        confirmButtonColor: "#001F54"
-
-    });
-
-});
-
-</script>
-
-<?php unset($_SESSION['success']); endif; ?>
-
-<?php if (!empty($error)): ?>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function(){
-
-    Swal.fire({
-
-        icon: "error",
-
-        title: "Login Failed",
-
-        text: "<?= htmlspecialchars($error, ENT_QUOTES); ?>",
-
-        confirmButtonColor: "#001F54"
-
-    });
-
-});
-
-</script>
-
-<?php endif; ?>
 
 <section class="py-5" style="background:#f5f7fa;min-height:90vh;">
 
@@ -373,7 +304,8 @@ Back to Homepage
 function togglePassword(){
 
     const input = document.getElementById("password");
-    const icon = document.querySelector("#password + button i");
+    const button = input.nextElementSibling;
+const icon = button.querySelector("i");
 
     if(input.type === "password"){
 
@@ -392,4 +324,46 @@ function togglePassword(){
 }
 
 </script>
+
 <?php include "../includes/footer.php"; ?>
+
+<?php if (isset($_SESSION['success'])): ?>
+
+<script>
+
+Swal.fire({
+
+    icon: "success",
+
+    title: "Login OTP",
+
+    text: "<?= $_SESSION['success']; ?>",
+
+    confirmButtonColor:"#001F54"
+
+});
+
+</script>
+
+<?php unset($_SESSION['success']); endif; ?>
+
+
+<?php if (!empty($error)): ?>
+
+<script>
+
+Swal.fire({
+
+    icon:"error",
+
+    title:"Login Failed",
+
+    text:"<?= htmlspecialchars($error, ENT_QUOTES); ?>",
+
+    confirmButtonColor:"#001F54"
+
+});
+
+</script>
+
+<?php endif; ?>
