@@ -214,9 +214,8 @@ body{
     background:#eef4ff;
 }
 
-/* ---------- Badges ---------- */
 
-./* ===============================
+/* ===============================
    Candidate Voting Cards
 ================================ */
 
@@ -332,5 +331,467 @@ img:hover{
     font-size:3rem;
 
     font-weight:700;
+
+}
+/* ===========================
+   Candidate Carousel
+=========================== */
+
+.carousel-wrapper{
+
+    width:100%;
+    overflow:hidden;
+    position:relative;
+    margin-bottom:50px;
+}
+
+.candidate-strip{
+
+    display:flex;
+    gap:20px;
+    width:max-content;
+    padding:10px 40px;
+    will-change:transform;
+}
+
+.candidate-card-hero{
+
+    flex:0 0 auto;
+
+    width:145px;
+
+    text-align:center;
+
+    transition:.35s;
+}
+
+.candidate-card-hero:hover{
+
+    transform:translateY(-10px) scale(1.05);
+
+}
+
+.chero-img{
+
+    width:145px;
+
+    height:190px;
+
+    overflow:hidden;
+
+    border-radius:24px;
+
+    background:white;
+
+    border:2px solid #dfe8f6;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+}
+
+.chero-img img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    object-position:center top;
+
+}
+
+.candidate-label{
+
+    margin-top:12px;
+
+}
+
+.c-name{
+
+    font-size:14px;
+
+    font-weight:700;
+
+    color:#001F54;
+
+}
+
+.c-role{
+
+    font-size:12px;
+
+    color:#777;
+
+}
+
+
+/* ======================================
+   Welcome Hero
+====================================== */
+
+.welcome-hero{
+
+    background:linear-gradient(135deg,#001F54,#003C8F);
+
+    color:#fff;
+
+    border-radius:24px;
+
+    padding:35px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:30px;
+
+    margin-bottom:35px;
+
+    box-shadow:0 18px 45px rgba(0,31,84,.18);
+
+}
+
+.hero-avatar{
+
+    width:95px;
+
+    height:95px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:58px;
+
+}
+
+.hero-content h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+.hero-content span{
+
+    color:#FFD54F;
+
+}
+
+.hero-content p{
+
+    margin-top:14px;
+
+    font-size:17px;
+
+    opacity:.9;
+
+}
+
+.hero-badges{
+
+    margin-top:8px;
+
+}
+
+.hero-badges .badge{
+
+    padding:10px 18px;
+
+    font-size:14px;
+
+    border-radius:50px;
+
+}
+
+/* ==========================================
+   Student Information Cards
+========================================== */
+
+.info-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    text-align:center;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+    height:100%;
+
+}
+
+.info-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(0,31,84,.12);
+
+}
+
+.info-icon{
+
+    width:65px;
+
+    height:65px;
+
+    margin:auto;
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#fff;
+
+    font-size:28px;
+
+    margin-bottom:18px;
+
+}
+
+.info-title{
+
+    color:#6c757d;
+
+    font-size:14px;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+.info-value{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#001F54;
+
+    word-break:break-word;
+
+}
+
+/* ==========================================
+   Election Status Card
+========================================== */
+
+.status-card{
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    margin-top:35px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+
+}
+
+.status-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.status-header h4{
+
+    color:#001F54;
+
+    font-weight:700;
+
+    margin-bottom:5px;
+
+}
+
+.status-header small{
+
+    color:#6c757d;
+
+}
+
+.status-badge{
+
+    padding:10px 20px;
+
+    border-radius:50px;
+
+    font-weight:700;
+
+    font-size:14px;
+
+}
+
+.status-badge.success{
+
+    background:#d1fae5;
+
+    color:#047857;
+
+}
+
+.status-badge.warning{
+
+    background:#fff3cd;
+
+    color:#b45309;
+
+}
+
+.status-message{
+
+    display:flex;
+
+    gap:20px;
+
+    align-items:flex-start;
+
+}
+
+.status-message i{
+
+    font-size:42px;
+
+}
+
+.status-message.success i{
+
+    color:#22c55e;
+
+}
+
+.status-message.warning i{
+
+    color:#f59e0b;
+
+}
+
+.status-message h5{
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+.status-message p{
+
+    margin:0;
+
+    color:#6c757d;
+
+}
+
+/* ==========================================
+   Quick Actions
+========================================== */
+
+.section-title{
+
+    color:#001F54;
+
+    font-weight:700;
+
+}
+
+.action-card{
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    text-align:center;
+
+    display:block;
+
+    text-decoration:none;
+
+    color:#212529;
+
+    height:100%;
+
+    transition:.35s;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.action-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 40px rgba(0,31,84,.12);
+
+    color:#001F54;
+
+}
+
+.action-icon{
+
+    width:70px;
+
+    height:70px;
+
+    margin:auto;
+
+    border-radius:20px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#fff;
+
+    font-size:30px;
+
+    margin-bottom:20px;
+
+}
+
+.action-card h5{
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.action-card p{
+
+    color:#6c757d;
+
+    font-size:14px;
+
+    margin-bottom:0;
 
 }

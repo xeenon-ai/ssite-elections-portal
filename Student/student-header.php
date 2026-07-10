@@ -26,6 +26,10 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.m
 <link rel="stylesheet"
 href="<?= BASE_URL ?>assets/css/style.css">
 
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
 </head>
 
 <body>
@@ -135,6 +139,3 @@ Logout
 </div>
 
 </nav>
-
-</body>
-</html>

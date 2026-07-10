@@ -12,9 +12,11 @@ function getMailer()
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
     $mail->Username = 'ssiteelections@gmail.com';
-    $mail->Password = 'krql vbio mczj mmsi';
+    $mail->Password = 'ntkjevezrccshffz';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
+    $mail->SMTPDebug = 2;
+$mail->Debugoutput = 'html';
 
     $mail->CharSet = 'UTF-8';
 
