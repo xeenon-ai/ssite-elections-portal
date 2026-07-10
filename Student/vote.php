@@ -30,9 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $selected = $_POST['candidates'] ?? [];
 
-    if (count($selected) != 3) {
-
-        $error = "Please select exactly 3 candidates.";
+    if (count($selected) != 15) {
+        $error = "Please select exactly 15 candidates.";
 
     } else {
 
@@ -129,7 +128,7 @@ Welcome,
 
 <p class="text-muted">
 
-Choose exactly <strong>3 candidates</strong>.
+Choose exactly <strong>15 candidates</strong>.
 
 Once submitted, your vote cannot be changed.
 
@@ -147,8 +146,7 @@ Voting Instructions
 
 <ul class="mb-0 text-start">
 
-<li>Select exactly <strong>3 candidates</strong>.</li>
-
+<li>Select exactly <strong>15 candidates</strong>.</li>
 <li>Your vote can only be submitted once.</li>
 
 <li>Your vote cannot be changed after submission.</li>
@@ -208,55 +206,73 @@ style="width:0%;">
 
     <?php endif; ?>
 
-    <div class="card-body text-center d-flex flex-column">
+<div class="card-body candidate-body">
 
-        <h4 class="fw-bold text-primary mb-2">
+    <h3 class="candidate-name">
 
-            <?= htmlspecialchars($candidate['fullname']); ?>
+        <?= htmlspecialchars($candidate['fullname']); ?>
 
-        </h4>
+    </h3>
 
-        <span class="badge bg-primary rounded-pill mb-3">
+    <span class="candidate-badge">
 
-            Candidate
+        <i class="bi bi-patch-check-fill me-1"></i>
 
-        </span>
+        Candidate
 
-        <p class="text-muted mb-3">
+    </span>
+
+    <div class="candidate-meta">
+
+        <div>
+
+            <i class="bi bi-mortarboard-fill"></i>
 
             <?= htmlspecialchars($candidate['year_level']); ?>
 
-            •
+        </div>
+
+        <div>
+
+            <i class="bi bi-book-fill"></i>
 
             <?= htmlspecialchars($candidate['section']); ?>
-
-        </p>
-
-        <hr>
-
-        <p class="flex-grow-1">
-
-            <?= nl2br(htmlspecialchars($candidate['bio'])); ?>
-
-        </p>
-
-        <div class="mt-4">
-
-            <input
-            class="candidateCheck form-check-input"
-            type="checkbox"
-            name="candidates[]"
-            value="<?= $candidate['id']; ?>">
-
-            <span class="voteStatus badge bg-light text-dark ms-2">
-
-                Not Selected
-
-            </span>
 
         </div>
 
     </div>
+
+    <hr>
+
+    <h6 class="about-title">
+
+        About Me
+
+    </h6>
+
+    <p class="candidate-bio">
+
+        <?= nl2br(htmlspecialchars($candidate['bio'])); ?>
+
+    </p>
+
+    <div class="select-area mt-auto">
+
+        <input
+        class="candidateCheck form-check-input"
+        type="checkbox"
+        name="candidates[]"
+        value="<?= $candidate['id']; ?>">
+
+        <span class="voteStatus badge bg-light text-dark ms-2">
+
+            Click to Select
+
+        </span>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -272,13 +288,7 @@ style="width:0%;">
 
 Selected
 
-<span id="selectedCount">
-
-0
-
-</span>
-
-/3
+<span id="selectedCount">0</span>/15
 
 </h4>
 
@@ -317,9 +327,8 @@ function updateSelection(){
 
     counter.textContent = selected.length;
 
-    progress.style.width = (selected.length / 3 * 100) + "%";
-
-    submitBtn.disabled = selected.length !== 3;
+    progress.style.width = (selected.length / 15 * 100) + "%";
+    submitBtn.disabled = selected.length !== 15;
 
     cards.forEach(card=>{
 
@@ -331,10 +340,11 @@ function updateSelection(){
 
         ribbon.classList.add("d-none");
 
-        badge.className = "voteStatus badge bg-light text-dark ms-2";
+badge.className =
+"voteStatus badge rounded-pill bg-light text-dark px-3 py-2 ms-2";
         badge.innerHTML = "Not Selected";
 
-        checkbox.disabled = selected.length >= 3 && !checkbox.checked;
+        checkbox.disabled = selected.length >= 15 && !checkbox.checked;
 
     });
 
@@ -350,8 +360,8 @@ function updateSelection(){
 
         ribbon.classList.remove("d-none");
 
-        badge.className = "voteStatus badge bg-success ms-2";
-
+badge.className =
+"voteStatus badge rounded-pill bg-success px-3 py-2 ms-2";
         badge.innerHTML =
         '<i class="bi bi-check-circle-fill me-1"></i>Selected';
 
@@ -387,8 +397,7 @@ form.addEventListener("submit",function(e){
 
     const selected = document.querySelectorAll(".candidateCheck:checked");
 
-    if(selected.length !== 3){
-
+    if(selected.length !== 15){
         e.preventDefault();
 
         Swal.fire({
@@ -397,7 +406,7 @@ form.addEventListener("submit",function(e){
 
             title:"Incomplete Vote",
 
-            text:"Please select exactly three candidates."
+            text:"Please select exactly fifteen candidates."
 
         });
 
