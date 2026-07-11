@@ -95,7 +95,7 @@ if (!move_uploaded_file(
 
 }
 
-include "../includes/header.php";
+include "admin-header.php";
 
 
 ?>
